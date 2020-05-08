@@ -15,7 +15,7 @@ import xml.etree.ElementTree as ET
 
 
 
-# service_key = "594146617a626e6d3130346942654575"
+# service_key = 
 # url = f"http://openapi.seoul.go.kr:8088/{service_key}/json/bikeList/1/500/".format({}, service_key)
 district_code = 1111051500
 url = f'http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone={district_code}'.format({}, district_code)
