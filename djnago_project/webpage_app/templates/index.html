@@ -4,12 +4,12 @@
 {% load static %}
 <head>
     {% block title_outer %}
-        <title>{% block title %}{{ site.name }}{% endblock %}</title>
+        <title>{% block title %}gutenTag{% endblock %}</title>
     {% endblock %}
 
     {% block meta %}
         <meta charset="utf-8">
-        <meta http-equiv="X-UA-COMPATIBLE" content="IE=edge">
+        <meta http-equiv="X-UA-COMPATIBLE" content="IE=chrome">
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     {% endblock %}
 
@@ -20,7 +20,6 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body class="hold-transition sidebar-mini {% block body_class %}{% block bodyclass %}{% endblock %}{% endblock %}">
-
 {% block body %}
     <div class="wrapper">
         {% block nav_header %}
@@ -65,7 +64,7 @@
                       <!-- select -->
                       <div class="form-group">
                         <label>도/시</label>
-                        <select class="form-control">
+                        <select class="form-control", onchange="alert();">
                           <option>서울</option>
                           <option>부산</option>
                           <option>경기도</option>
@@ -77,13 +76,17 @@
                     <div class="col-sm-2">
                       <div class="form-group">
                         <label>구/동</label>
-                        <select class="form-control">
+                        <select class="form-control", onchange="changeLangSelect()">
                           <option>강남구</option>
                           <option>동대문구</option>
                           <option>중구</option>
                           <option>서초구</option>
                           <option>마포구</option>
                         </select>
+                          <div class="row-sm-2">
+                        <p><b>기온</b></p>
+                        <p id = "demo"></p>
+                    </div>
                       </div>
                     </div>
                   </div>
@@ -113,6 +116,8 @@
                             </div>
                             <!-- /.d-flex -->
                             <div class="position-relative mb-4">
+                              <h2> {{title}} </h2>
+                              <p> {{cal}} </p>
                               <canvas id="visitors-chart" height="200"></canvas>
                             </div>
 

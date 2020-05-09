@@ -27,13 +27,20 @@ json_weather = json_data['rss']['channel']['item']['description']['body']['data'
 
 weathers = [data for data in json_weather]
 print(weathers)
+tmp_list = []
+print(weathers[0])
 
-for weather in weathers:
-    print(weather['day'])
-    print(weather['hour'])
-    print(weather['temp'])
-    print(weather['sky'])
-
+for key, value in weathers[0].items():
+    tmp_list.append(value)
+    print(key,value)
+    temp = tmp_list[3]
+# for weather in weathers:
+#     print(weather['day'])
+#     print(weather['hour'])
+#     print(weather['temp'])
+#     tmp_list.append(weather['temp'])
+#     print(tmp_list)
+#     print(weather['sky'])
 
 
 # re_data = data['rentBikeStatus']['row']
