@@ -14,6 +14,10 @@ class test_db(models.Model):
     age = models.IntegerField(default=10, null=True)
     roll_number = models.CharField(max_length=20, null=True)
 
+    city = models.CharField(max_length=20, null=True)
+    gu = models.CharField(max_length=20, null=True)
+    dong = models.CharField(max_length=20, null=True)
+
     def __str__(self):
         return self.name
 

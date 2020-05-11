@@ -2,11 +2,13 @@
 <html>
 {% load adminlte_helpers i18n %}
 {% load static %}
+
+
 <head>
     {% block title_outer %}
         <title>{% block title %}gutenTag{% endblock %}</title>
     {% endblock %}
-
+    <script type="text/javascript" src = "{% static '/categoryChange.js' %}"></script>
     {% block meta %}
         <meta charset="utf-8">
         <meta http-equiv="X-UA-COMPATIBLE" content="IE=chrome">
@@ -15,6 +17,7 @@
 
     {% block stylesheets %}
         {% include 'adminlte/lib/_styles.html' %}
+
     {% endblock %}
 
     {% block extra_head %}{% endblock %}
@@ -59,37 +62,61 @@
                 <!-- Main content -->
                 <div class="content">
                   <!---지역선택--->
-                  <div class="row">
-                    <div class="col-sm-2">
-                      <!-- select -->
-                      <div class="form-group">
-                        <label>도/시</label>
-                        <select class="form-control", onchange="alert();">
-                          <option>서울</option>
-                          <option>부산</option>
-                          <option>경기도</option>
-                          <option>전라도</option>
-                          <option>제주도</option>
-                        </select>
-                      </div>
+                    <div class="row">
+                        <!-- general form elements disabled -->
+                        <div class="card card-secondary">
+                            <div class="card-header">
+                                <h3 class="card-title">당신의 동네는 어디오?</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <form role="form" method="GET" action = "{% url 'get_weather' %}">
+                                    <div class="row">
+                                        <div class="row-sm-7">
+                                            <!-- select 도시 -->
+                                            <div class="form-group" style="padding:10px;">
+                                                <label>시</label>
+                                                <select class="custom-select" id="city_select" name="city_select" onchange = "categoryChange('gu_select');">
+                                                    <option disabled="True" selected>--</option>
+                                                    <option>서울시</option>
+                                                    <option>성남시 분당구</option>
+                                                    <option>춘천시</option>
+                                                    <option>부산시</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row-sm-7">
+                                            <!-- select 구역 -->
+                                            <div class="form-group" style="padding:10px;">
+                                                <label>구</label>
+                                                <select class="custom-select" id ="gu_select" name="gu_select" onchange = "category_dong('dong_select');">
+                                                    <option disabled="True" selected>---</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row-sm-7">
+                                            <!-- select 동 -->
+                                            <div class="form-group" style="padding:10px;">
+                                                <label>동</label>
+                                                <select class="custom-select" id="dong_select" name="dong_select">
+                                                    <option disabled="True" selected>---</option>
+                                                </select>
+                                            </div>
+                                            <!-- button 조회 -->
+                                            <div class = "row-sm-5">
+                                                <div class="button">
+<!--                                                    <form method="GET" action = "{% url 'get_weather' %}" >-->
+                                                    <input type="Submit" name="submit" value="조회"/>
+<!--                                                    </form>-->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
                     </div>
-                    <div class="col-sm-2">
-                      <div class="form-group">
-                        <label>구/동</label>
-                        <select class="form-control", onchange="changeLangSelect()">
-                          <option>강남구</option>
-                          <option>동대문구</option>
-                          <option>중구</option>
-                          <option>서초구</option>
-                          <option>마포구</option>
-                        </select>
-                          <div class="row-sm-2">
-                        <p><b>기온</b></p>
-                        <p id = "demo"></p>
-                    </div>
-                      </div>
-                    </div>
-                  </div>
                   <!---/. 지역선택 끝--->
                   <div class="container-fluid">
                     <div class="row">
@@ -116,9 +143,24 @@
                             </div>
                             <!-- /.d-flex -->
                             <div class="position-relative mb-4">
-                              <h2> {{title}} </h2>
-                              <p> {{cal}} </p>
-                              <canvas id="visitors-chart" height="200"></canvas>
+                              <div class="row">
+                                <div class="column", style="padding:10px;">
+                                   <h2 style="color:powderblue",> 기온 </h2>
+                                   <p><b> {{now_temp}} </b></p>
+                                </div>
+                                <div class="column", style="padding:10px;">
+                                    <h4 style="color:powderblue"> 최고 </h4>
+                                    <p><b> {{max_temp}} </b></p>
+                                </div>
+                                <div class="column", style="padding:10px;">
+                                    <h4 style="color:powderblue"> 최저 </h4>
+                                    <p><b> {{min_temp}} </b></p>
+                                </div>
+                              </div>
+                              <h3 style="color:powderblue"> 하늘상태 </h3>
+                              <p><b> {{sky_status}} </b></p>
+                              <h3 style="color:powderblue"> 강수확률 </h3>
+                              <p><b> {{rain_pop}} </b></p>
                             </div>
 
                             <div class="d-flex flex-row justify-content-end">

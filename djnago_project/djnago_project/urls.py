@@ -17,9 +17,13 @@ from django.contrib import admin
 from django.urls import path
 import webpage_app.views
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', webpage_app.views.index, name = 'index'),
     path('weather/', webpage_app.views.weather, name = 'weather'),
-    path('transportaion/', webpage_app.views.transportaion, name = 'transportaion')
+    path('transportaion/', webpage_app.views.transportaion, name = 'transportaion'),
+    path('get_weather/', webpage_app.views.get_weather, name="get_weather"),
 ]
+
+

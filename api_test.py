@@ -1,103 +1,104 @@
 # *-* coding: utf-8 *-*
-
-from urllib import response
+import datetime
+import json
+import urllib
 from urllib.request import urlopen, Request
 from urllib.parse import urlencode, unquote, quote_plus
-import urllib
-import requests
-import simplejson
-import pandas as pd
-from kma import Weather
-from urllib.error import HTTPError
-import json
-import xmltodict
-import xml.etree.ElementTree as ET
+
+
+
+
+current_date_time = (datetime.datetime.today() - datetime.timedelta(hours=1)).strftime('%Y%m%d%H00')
+today_date = current_date_time[:8]
+current_time = current_date_time[8:]
+print(current_time)
+
+# district x, y
+nx = 60
+ny = 127
+
+
+def get_current_weather(today_date, current_time, nx, ny):
+    key = 'PJsLmdbHRcHiLAUnsUfnTdZaIS0NFpR0Nndy82K1OQwLmf%2BVgvXhrkoeOMqTW6%2FdzOJQ5RbF%2FmDb7oocoMY%2BYQ%3D%3D'
+    url = f'http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtFcst?ServiceKey={key}&pageNo=&numOfRows=40&dataType=JSON&base_date={today_date}&base_time={current_time}&nx={nx}&ny={ny}&'
+
+    parse_url = url.format(key, today_date, current_time, nx, ny)
+    print(parse_url)
+
+    # to request Weather API
+    request = urllib.request.Request(parse_url)
+    response_body = urlopen(request).read()
+    data = json.loads(response_body)
+    re_data = data['response']['body']['items']['item']
+    print(re_data)
+
+    # to design data - 기온, 하늘상태, 강수량, 강수확률
+    temp = []
+    sky = []
+    precipitation = []
+    rain_forecast = []
+
+    for data in re_data:
+        if data['category'] == 'T1H':
+            temp.append(data['fcstValue'])
+        if data['category'] == 'SKY':
+            sky.append(data['fcstValue'])
+        if data['category'] == 'RN1':
+            precipitation.append(data['fcstValue'])
+        if data['category'] == 'PTY':
+            rain_forecast.append(data['fcstValue'])
+
+    print(temp)
+    print(sky)
+    print(precipitation)
+    print(rain_forecast)
+
+    return temp, sky, precipitation, rain_forecast
+
+get_current_weather(today_date, current_time, nx, ny)
+
+
+
+
+
+
+"""
+params = f'&pageNo=&numOfRows=40&dataType=JSON&base_date={today_date}&base_time={current_time}&nx={nx}&ny={ny}&'
+def get_url(params, nx, ny):
+    key = 'PJsLmdbHRcHiLAUnsUfnTdZaIS0NFpR0Nndy82K1OQwLmf%2BVgvXhrkoeOMqTW6%2FdzOJQ5RbF%2FmDb7oocoMY%2BYQ%3D%3D'
+    url = f'http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtFcst?ServiceKey={key}'
+    params = params.format(today_date, current_time, nx, ny)
+    callback_url = url+params
+    return callback_url
+"""
 
 
 
 # service_key = 
 # url = f"http://openapi.seoul.go.kr:8088/{service_key}/json/bikeList/1/500/".format({}, service_key)
-district_code = 1111051500
-url = f'http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone={district_code}'.format({}, district_code)
-xml_data = urlopen(url).read().decode('utf-8')
-json_data = xmltodict.parse(xml_data)
-print(json_data['rss']['channel']['item']['category'])
-print(json_data['rss']['channel']['item']['description'])
-json_weather = json_data['rss']['channel']['item']['description']['body']['data']
-
-weathers = [data for data in json_weather]
-print(weathers)
-tmp_list = []
-print(weathers[0])
-
-for key, value in weathers[0].items():
-    tmp_list.append(value)
-    print(key,value)
-    temp = tmp_list[3]
-# for weather in weathers:
-#     print(weather['day'])
-#     print(weather['hour'])
-#     print(weather['temp'])
-#     tmp_list.append(weather['temp'])
-#     print(tmp_list)
-#     print(weather['sky'])
-
-
-# re_data = data['rentBikeStatus']['row']
-# station_id = re_data[0]['stationId']
-# station_name = re_data[0]['stationName']
-# get_rackTotCnt = re_data[0]['rackTotCnt']
-# get_bikesCnt = re_data[0]['parkingBikeTotCnt']
-# shared = re_data[0]['shared']
+# district_code = 1111051500
+# url = f'http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone={district_code}'.format({}, district_code)
+# xml_data = urlopen(url).read().decode('utf-8')
+# json_data = xmltodict.parse(xml_data)
+# print(json_data['rss']['channel']['item']['category'])
+# print(json_data['rss']['channel']['item']['description'])
+# json_weather = json_data['rss']['channel']['item']['description']['body']['data']
+#
+# weathers = [data for data in json_weather]
+# print(weathers)
+# tmp_list = []
+# print(weathers[0])
+#
+# weathers = [data for data in json_weather]
+# tmp_list = []
+#
+# for key, value in weathers[0].items():
+#     tmp_list.append(value)
+#     print(key, value)
+#
+# now_temp = tmp_list[3] + ' 도'
+# title = "기온"
+# print(now_temp)
 
 
 
-
-
-# if response_body.status_code != 200:
-#     print('Failed to get data:', response_body.status_code)
-# else:
-#     print('First 100 characters of data are')
-#     print(data[:100])
-
-
-
-"""
-service_key = 'PJsLmdbHRcHiLAUnsUfnTdZaIS0NFpR0Nndy82K1OQwLmf+VgvXhrkoeOMqTW6/dzOJQ5RbF/mDb7oocoMY+YQ=='
-api_key_decode = unquote(service_key)
-
-
-URL = 'http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtNcst'
-
-params = '?' + urlencode({
-    quote_plus(
-        "serviceKey"): "PJsLmdbHRcHiLAUnsUfnTdZaIS0NFpR0Nndy82K1OQwLmf+VgvXhrkoeOMqTW6/dzOJQ5RbF/mDb7oocoMY+YQ==",
-    quote_plus("numOfRows"): "10",  # 한 페이지 결과 수 // default : 10
-    quote_plus("pageNo"): "1",  # 페이지 번호 // default : 1
-    quote_plus("dataType"): "JSON",  # 응답자료형식 : XML, JSON
-    quote_plus("base_date"): "20200225",  # 발표일자 // yyyymmdd
-    quote_plus("base_time"): "0600",  # 발표시각 // HHMM, 매 시각 40분 이후 호출
-    quote_plus("nx"): "60",  # 예보지점 X 좌표
-    quote_plus("ny"): "127"  # 예보지점 Y 좌표
-})
-
-request = Request(URL + params)
-print(request)
-request.get_method = lambda: 'GET'
-response_body = urlopen(request).read()
-print(response_body)
-
-
-
-
-# # URL parsing
-# req = urllib.request.Request(URL + unquote(params))
-# # Get Data from API
-# print(req)
-# response_body = urlopen(req).read()  # get bytes data
-# print(response_body)
-# # Convert bytes to json
-# data = json.loads(response_body)
-# print(data)
-
-"""
