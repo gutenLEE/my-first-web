@@ -1,264 +1,251 @@
-<!DOCTYPE html>
-<html>
-{% load adminlte_helpers i18n %}
-{% load static %}
+{% extends 'base.html' %}
+
+{% block meta %}
+<!--<script>-->
+<!--    var seoul = "{{ selected__gu }}";-->
+<!--    var seoul = seoul.split(',')-->
 
 
-<head>
-    {% block title_outer %}
-        <title>{% block title %}gutenTag{% endblock %}</title>
-    {% endblock %}
-    <script type="text/javascript" src = "{% static '/categoryChange.js' %}"></script>
-    {% block meta %}
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-COMPATIBLE" content="IE=chrome">
-        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    {% endblock %}
+<!--    function categoryChange(elementId) {-->
 
-    {% block stylesheets %}
-        {% include 'adminlte/lib/_styles.html' %}
+<!--        alert(document.getElementById("city_select").value);-->
 
-    {% endblock %}
+<!--        for(i = 0; i < seoul.length; i++){-->
+<!--            console.log(seoul[i])-->
+<!--        };-->
 
-    {% block extra_head %}{% endblock %}
-</head>
-<body class="hold-transition sidebar-mini {% block body_class %}{% block bodyclass %}{% endblock %}{% endblock %}">
-{% block body %}
-    <div class="wrapper">
-        {% block nav_header %}
-            {% include 'adminlte/lib/_main_header.html' %}
-        {% endblock %}
+<!--        var select = document.getElementById(elementId);-->
+<!--        var city = document.getElementById("city_select").value;-->
 
-        {% block nav_sidebar %}
-            {% include 'adminlte/lib/_main_sidebar.html' %}
-        {% endblock %}
+<!--        if( city == "서울특별시") var d = seoul;-->
 
-        {% block content_wrapper %}
-        <div class="content-wrapper">
-            {% block content_header %}
-                <section class="content-header">
-                    {% block no_heading %}
-                        <h1>
-                            {% block page_name %}{% endblock %}
-                            <div class="header-actions">
-                                {% block page_actions %}{% endblock %}
+<!--        for (x in d){-->
+<!--            var opt = document.createElement('option');-->
+<!--            opt.value = d[x];-->
+<!--            opt.innerHTML = d[x];-->
+<!--            select.appendChild(opt);-->
+<!--        }-->
+<!--     };-->
+
+<!--    function category_dong(elementId) {-->
+<!--        alert(document.getElementById("gu_select").value);-->
+
+<!--        var seoul = "{{ gu_list }}";-->
+<!--        var seoul = seoul.split(',')-->
+
+<!--        var jong_gu = ["소공동", "회현동", "명동", "필동", "장충동" ,-->
+<!--                       "광희동", "을지로동", "신당동", "다산동", "약수동",-->
+<!--                       "청구동", "신당제5동", "동화동", "황학동", "중림동"]-->
+
+
+<!--        var jong_ro_gu = ["청운효자동", "사직동", "삼청동", "부암동", "평창동",-->
+<!--                          "무악동", "교남동", "가회동", "종로1.2.3.4가동", "종로5.6가동",-->
+<!--                           "이화동", "혜화동", "창신제1동", "창신제2동", "창신제3동",-->
+<!--                           "숭인제1동", "숭인제2동"]-->
+
+<!--        var select = document.getElementById(elementId);-->
+<!--        var city = document.getElementById("gu_select").value;-->
+
+<!--        if( city == "중구") var d = jong_gu;-->
+
+<!--        for (x in d){-->
+<!--            var opt = document.createElement('option');-->
+<!--            opt.value = d[x];-->
+<!--            opt.innerHTML = d[x];-->
+<!--            select.appendChild(opt);-->
+<!--        }-->
+<!-- };-->
+<!--</script>-->
+<!--{% endblock %}-->
+
+{% block content_outer %}
+<section class="content">
+    <!-- Main content -->
+    <div class="content">
+        <!---지역선택--->
+        <div class="row">
+            <!-- general form elements disabled -->
+            <div class="card card-secondary">
+                <div class="card-header">
+                    <h3 class="card-title">당신의 동네는 어디오?</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+<!--                    <form role="form" method="GET" action = "{% url 'get_weather' %}">-->
+                        <div class="row">
+                            <div class="row-sm-7">
+                                <!-- select 도시 -->
+                                <div class="form-group" style="padding:10px;">
+                                    <label>시</label>
+                                    <form method="GET" action="{% url 'address' %}" class="select">
+                                        <!--     <select name="filtering" class="form-control" onchange="this.form.submit()">-->
+                                        <select class="custom-select" id="city_select" name="city_select" onchange="this.form.submit()">
+                                            <option disabled="False" selected>{{ selected_city }}</option>
+                                            {% for city in cities %}
+                                            <option>{{ city }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </form>
+                                </div>
                             </div>
-                            {% block no_description %}
-                            <small>{% block page_description %}{% endblock %}</small>
-                            {% endblock %}
-                        </h1>
-                        {% block breadcrumbs %}
-                            {# Breadcrumb implementation left to developers #}
-                        {% endblock %}
-                    {% endblock no_heading %}
-                </section>
-            {% endblock %}
-
-            {% block content_outer %}
-            <section class="content">
-                {% block messages %}
-                    {% include 'adminlte/lib/_messages.html' %}
-                {% endblock %}
-                <!-- Main content -->
-                <div class="content">
-                  <!---지역선택--->
-                    <div class="row">
-                        <!-- general form elements disabled -->
-                        <div class="card card-secondary">
-                            <div class="card-header">
-                                <h3 class="card-title">당신의 동네는 어디오?</h3>
+                            <div class="row-sm-7">
+                                <!-- select 구역 -->
+                                <div class="form-group" style="padding:10px;">
+                                    <label>구</label>
+                                    <form method="GET" action="{% url 'address' %}" class="select">
+                                        <select class="custom-select" id ="gu_select" name="gu_select" onchange="this.form.submit()" >
+                                            <option  disabled="False" selected>{{ seleted_gu }}</option>
+                                            {% for gu in gu_list %}
+                                            <option>{{ gu }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </form>
+                                </div>
                             </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <form role="form" method="GET" action = "{% url 'get_weather' %}">
-                                    <div class="row">
-                                        <div class="row-sm-7">
-                                            <!-- select 도시 -->
-                                            <div class="form-group" style="padding:10px;">
-                                                <label>시</label>
-                                                <select class="custom-select" id="city_select" name="city_select" onchange = "categoryChange('gu_select');">
-                                                    <option disabled="True" selected>--</option>
-                                                    <option>서울시</option>
-                                                    <option>성남시 분당구</option>
-                                                    <option>춘천시</option>
-                                                    <option>부산시</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="row-sm-7">
-                                            <!-- select 구역 -->
-                                            <div class="form-group" style="padding:10px;">
-                                                <label>구</label>
-                                                <select class="custom-select" id ="gu_select" name="gu_select" onchange = "category_dong('dong_select');">
-                                                    <option disabled="True" selected>---</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="row-sm-7">
-                                            <!-- select 동 -->
-                                            <div class="form-group" style="padding:10px;">
-                                                <label>동</label>
-                                                <select class="custom-select" id="dong_select" name="dong_select">
-                                                    <option disabled="True" selected>---</option>
-                                                </select>
-                                            </div>
-                                            <!-- button 조회 -->
-                                            <div class = "row-sm-5">
-                                                <div class="button">
-<!--                                                    <form method="GET" action = "{% url 'get_weather' %}" >-->
-                                                    <input type="Submit" name="submit" value="조회"/>
-<!--                                                    </form>-->
-                                                </div>
-                                            </div>
-                                        </div>
+                            <div class="row-sm-7">
+                                <!-- select 동 -->
+                                <div class="form-group" style="padding:10px;">
+                                    <label>동</label>
+                                    <select class="custom-select" id="dong_select" name="dong_select">
+                                        <option disabled="True" selected>---</option>
+                                         {% for dong in dong_list %}
+                                           <option>{{ dong }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <!-- button 조회 -->
+                                <div class = "row-sm-5">
+                                    <div class="button">
+                                        <input type="Submit" name="submit" value="조회"/>
                                     </div>
-                                </form>
+                                </div>
                             </div>
-                            <!-- /.card-body -->
                         </div>
-                    </div>
-                  <!---/. 지역선택 끝--->
-                  <div class="container-fluid">
-                    <div class="row">
-                      <div class="col-lg-6">
-                        <div class="card">
-                          <div class="card-header border-0">
+<!--                    </form>-->
+                </div>
+                <!-- /.card-body -->
+            </div>
+        </div>
+        <!---/. 지역선택 끝--->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header border-0">
                             <div class="d-flex justify-content-between">
-                              <h3 class="card-title">날씨 요약</h3>
-                              <a class="detail-link" href="{% url 'weather' %}">더보기</a>
+                                <h3 class="card-title">날씨 요약</h3>
+                                <a class="detail-link" href="{% url 'weather' %}">더보기</a>
                             </div>
-                          </div>
-                          <div class="card-body">
+                        </div>
+                        <div class="card-body">
                             <div class="d-flex">
-                              <p class="d-flex flex-column">
-                                <span class="text-bold text-lg">820</span>
-                                <span>Visitors Over Time</span>
-                              </p>
-                              <p class="ml-auto d-flex flex-column text-right">
-                                <span class="text-success">
-                                  <i class="fas fa-arrow-up"></i> 12.5%
-                                </span>
-                                <span class="text-muted">Since last week</span>
-                              </p>
+                                <p class="d-flex flex-column">
+                                    <span class="text-bold text-lg">820</span>
+                                    <span>Visitors Over Time</span>
+                                </p>
+                                <p class="ml-auto d-flex flex-column text-right">
+                        <span class="text-success">
+                          <i class="fas fa-arrow-up"></i> 12.5%
+                        </span>
+                                    <span class="text-muted">Since last week</span>
+                                </p>
                             </div>
                             <!-- /.d-flex -->
                             <div class="position-relative mb-4">
-                              <div class="row">
-                                <div class="column", style="padding:10px;">
-                                   <h2 style="color:powderblue",> 기온 </h2>
-                                   <p><b> {{now_temp}} </b></p>
+                                <div class="row">
+                                    <div class="column", style="padding:10px;">
+                                        <h2 style="color:powderblue",> 기온 </h2>
+                                        <p><b> {{now_temp}} </b></p>
+                                    </div>
+                                    <div class="column", style="padding:10px;">
+                                        <h4 style="color:powderblue"> 최고 </h4>
+                                        <p><b> {{max_temp}} </b></p>
+                                    </div>
+                                    <div class="column", style="padding:10px;">
+                                        <h4 style="color:powderblue"> 최저 </h4>
+                                        <p><b> {{min_temp}} </b></p>
+                                    </div>
                                 </div>
-                                <div class="column", style="padding:10px;">
-                                    <h4 style="color:powderblue"> 최고 </h4>
-                                    <p><b> {{max_temp}} </b></p>
-                                </div>
-                                <div class="column", style="padding:10px;">
-                                    <h4 style="color:powderblue"> 최저 </h4>
-                                    <p><b> {{min_temp}} </b></p>
-                                </div>
-                              </div>
-                              <h3 style="color:powderblue"> 하늘상태 </h3>
-                              <p><b> {{sky_status}} </b></p>
-                              <h3 style="color:powderblue"> 강수확률 </h3>
-                              <p><b> {{rain_pop}} </b></p>
+                                <h3 style="color:powderblue"> 하늘상태 </h3>
+                                <p><b> {{sky_status}} </b></p>
+                                <h3 style="color:powderblue"> 강수확률 </h3>
+                                <p><b> {{rain_pop}} </b></p>
                             </div>
-
                             <div class="d-flex flex-row justify-content-end">
                               <span class="mr-2">
                                 <i class="fas fa-square text-primary"></i> This Week
                               </span>
-
                               <span>
                                 <i class="fas fa-square text-gray"></i> Last Week
                               </span>
                             </div>
-                          </div>
                         </div>
-                        <!-- /.card -->
+                    </div>
+                    <!-- /.card -->
 
-                        <div class="card">
-                          <div class="card-header border-0">
+                    <div class="card">
+                        <div class="card-header border-0">
                             <h3 class="card-title">여기는 여유가 된다면 캘린더</h3>
                             <div class="card-tools">
-                              <a href="#" class="btn btn-tool btn-sm">
-                                <i class="fas fa-download"></i>
-                              </a>
-                              <a href="#" class="btn btn-tool btn-sm">
-                                <i class="fas fa-bars"></i>
-                              </a>
+                                <a href="#" class="btn btn-tool btn-sm">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                                <a href="#" class="btn btn-tool btn-sm">
+                                    <i class="fas fa-bars"></i>
+                                </a>
                             </div>
-                          </div>
                         </div>
-                        <!-- /.card -->
-                      </div>
-                      <div class="col-lg-6">
-                        <div class="card">
-                          <div class="card-header border-0">
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header border-0">
                             <div class="d-flex justify-content-between">
-                              <h3 class="card-title">교통 요약</h3>
+                                <h3 class="card-title">교통 요약</h3>
                                 <a class="detail-link" href="{% url 'transportaion' %}">더보기</a>
                             </div>
-                          </div>
-                          <div class="card-body">
+                        </div>
+                        <div class="card-body">
                             <div class="d-flex">
-                              <p class="d-flex flex-column">
-                                <span class="text-bold text-lg">820</span>
-                                <span>Visitors Over Time</span>
-                              </p>
-                              <p class="ml-auto d-flex flex-column text-right">
-                                <span class="text-success">
-                                  <i class="fas fa-arrow-up"></i> 12.5%
-                                </span>
-                                <span class="text-muted">Since last week</span>
-                              </p>
+                                <p class="d-flex flex-column">
+                                    <span class="text-bold text-lg">820</span>
+                                    <span>Visitors Over Time</span>
+                                </p>
+                                <p class="ml-auto d-flex flex-column text-right">
+                        <span class="text-success">
+                          <i class="fas fa-arrow-up"></i> 12.5%
+                        </span>
+                                    <span class="text-muted">Since last week</span>
+                                </p>
                             </div>
                             <!-- /.d-flex -->
 
                             <div class="position-relative mb-4">
-                              <canvas id="visitors-chart" height="200"></canvas>
+                                <canvas id="visitors-chart" height="200"></canvas>
                             </div>
 
                             <div class="d-flex flex-row justify-content-end">
-                              <span class="mr-2">
-                                <i class="fas fa-square text-primary"></i> This Week
-                              </span>
+                      <span class="mr-2">
+                        <i class="fas fa-square text-primary"></i> This Week
+                      </span>
 
-                              <span>
-                                <i class="fas fa-square text-gray"></i> Last Week
-                              </span>
+                                <span>
+                        <i class="fas fa-square text-gray"></i> Last Week
+                      </span>
                             </div>
-                          </div>
                         </div>
-                        <!-- /.card -->
-                      </div>
-                      <!-- /.col-md-6 -->
                     </div>
-                    <!-- /.row -->
-                  </div><!-- /.container-fluid -->
+                    <!-- /.card -->
                 </div>
-                <!-- /.content -->
-                {% block content_block_wrap %}
-                    {% block content %}{% endblock %}
-                {% endblock %}
-            </section>
-            {% endblock %}
-
-        </div>
-        {% endblock content_wrapper %}
-
-        {% block nav_footer %}
-            {% include 'adminlte/lib/_main_footer.html' %}
-        {% endblock %}
-
+                <!-- /.col-md-6 -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
     </div>
-{% endblock body %}
-
-{% block javascript %}
-{% include 'adminlte/lib/_scripts.html' %}
+    <!-- /.content -->
+    {% block content_block_wrap %}
+    {% block content %}{% endblock %}
+    {% endblock %}
+</section>
 {% endblock %}
-
-{% block extra_js %}{% endblock %}
-
-{% block extra_foot %}{% endblock %}
-</body>
-</html>

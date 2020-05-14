@@ -1,5 +1,5 @@
 from django.db import models
-from djongo import models
+from django.db import connections
 import pymongo
 # the bridge between your database and server.
 from pymongo import MongoClient
@@ -20,5 +20,3 @@ class test_db(models.Model):
 
     def __str__(self):
         return self.name
-
-
