@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% load custom_tags %}
 {% load adminlte_helpers i18n %}
 {% load static %}
 <html>
@@ -18,17 +18,18 @@
 
             function categoryChange(elementId) {
 
+                gu_list = [];
                 var selected_city = document.getElementById("city_select").value
                 var selected_gu = document.getElementById("gu_select").value;
                 var target = document.getElementById(elementId);
 
+                //구 리스트 추출
                 for(var i=0; i < addr.length; i++) {
-
                     //선택된 1단계 구역의 행정동 리스트
                     var city_check = addr[i][0];
                     if( city_check.indexOf(selected_city) != -1){
 
-                        // 1단계만 존재하는 구역 pass
+                        // 1단계만 존재하는 구역
                         if( addr[i][1] == ""){
                         }
                         else{
@@ -38,6 +39,15 @@
                         }
                     }
                 };
+
+                if( target.options.length > 1 ) {
+                    var len = target.options.length;
+                    for( var i = 1; i < len; i++ ) {
+                        target.remove(1);
+                    }
+                }
+
+
                     // to create select options
                 for (i = 0; i < gu_list.length; i++){
                     var opt = document.createElement('option');
@@ -45,21 +55,22 @@
                     opt.innerHTML = gu_list[i];
                     target.appendChild(opt);
                 }
+
             };
 
             function category_dong(elementId) {
-                alert(document.getElementById("gu_select").value);
+
+                dong_list = [];
 
                 var target = document.getElementById(elementId);
                 var selected_gu = document.getElementById("gu_select").value;
-                var selected_city = document.getElementById("city_select").value
-                console.log(selected_city)
+                var selected_city = document.getElementById("city_select").value;
 
-
+                // 동 리스트 추출
                for(var i=0; i < addr.length; i++) {
-
                     if ( addr[i][0] == selected_city && addr[i][1] == selected_gu){
                         if( addr[i][2] == ""){
+
                         }
                         else{
                             if (dong_list.indexOf(addr[i][2]) == -1){
@@ -68,6 +79,12 @@
                         }
                     };
                };
+
+               var len = target.options.length
+               for ( i = 0; i < len; i++){
+                    target.options.remove(1)
+               }
+
                 // to create select options
                 for (i = 0; i < dong_list.length; i++){
                         var opt = document.createElement('option');
@@ -127,10 +144,9 @@
             {% block content %}
             <!-- Main content -->
             <div class="content">
-                <!---지역선택--->
                 <div class="row">
-                    <!-- select location starts -->
-                    <div class="card card-secondary">
+                    <!---지역선택--->
+                    <div class="card card-secondary" style="margin:20px;">
                         <div class="card-header">
                             <h3 class="card-title">당신의 동네는 어디오?</h3>
                         </div>
@@ -179,8 +195,43 @@
                         </div>
                         <!-- /.card-body -->
                     </div>
+                    <!---검색어 입력 시작--->
+                    <div class="card card-secondary" style="margin:20px;">
+                        <div class="card-header">
+                            <h3 class="card-title">지하철 역 / 버스 정류소</h3>
+                        </div>
+                        <!-- /.card -header -->
+                        <div class="card-body">
+                            <form role="form" method="GET" action = "">
+                                <div class="row">
+                                    <!-- input states -->
+                                    <div class="form-group">
+                                        <label class="col-form-label" for="inputSuccess"><i class="fas fa-check"></i> Input with
+                                            success</label>
+                                        <input type="text" class="form-control is-valid" id="inputSuccess" placeholder="Enter ...">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label" for="inputWarning"><i class="far fa-bell"></i> Input with
+                                            warning</label>
+                                        <input type="text" class="form-control is-warning" id="inputWarning" placeholder="Enter ...">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label" for="inputError"><i class="far fa-times-circle"></i> Input with
+                                            error</label>
+                                        <input type="text" class="form-control is-invalid" id="inputError" placeholder="Enter ...">
+                                    </div>
+                                </div>
+                                <div class = "row-sm-5">
+                                    <div class="button">
+                                        <input type="Submit" name="submit" value="조회"/>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- /.검색어 입력 끝 -->
                 </div>
-                <!---/. 지역선택 끝--->
+                <!--날씨 출력 시작 -->
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-lg-6">
@@ -193,9 +244,10 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="d-flex">
-                                        <p class="d-flex flex-column">
-                                            <span class="text-bold text-lg">820</span>
-                                            <span>Visitors Over Time</span>
+                                        <p class="d-flex flex-row">
+                                            {% date as day %}
+                                            <span class="text-bold text-lg" style="margin-right : 10px;">{{ day }}</span>
+                                            {% today as tim %}
                                         </p>
                                         <p class="ml-auto d-flex flex-column text-right">
                                                     <span class="text-success">

@@ -1,48 +1,107 @@
+    var addr = {{ addre|safe }};
+    var gu_list = []
+    var dong_list = []
+
+    function categoryChange(elementId) {
+
+        alert(document.getElementById("city_select").value);
+        var selected_city = document.getElementById("city_select").value
+
+        var target = document.getElementById(elementId);
+
+        for(var i=0; i < addr.length; i++) {
+
+	        //선택된 1단계 구역의 행정동 리스트
+	        var city_check = addr[i][0];
+	        if( city_check.indexOf(selected_city) != -1){
+
+	                // 1단계만 존재하는 구역 pass
+	            if( addr[i][1] == ""){
+	            }
+	            else{
+                    if (gu_list.indexOf(addr[i][1]) == -1){
+                        gu_list.push(addr[i][1]);
+                        console.log(gu_list);
+                    }
+                }
+	        }
+        };
+            // to create select options
+        for (i = 0; i < gu_list.length; i++){
+            var opt = document.createElement('option');
+            opt.value = gu_list[i];
+            opt.innerHTML = gu_list[i];
+            target.appendChild(opt);
+        }
+    };
+
+    function category_dong(elementId) {
+        alert(document.getElementById("gu_select").value);
+
+        var target = document.getElementById(elementId);
+        var selected_gu = document.getElementById("gu_select").value;
+        var selected_city = document.getElementById("city_select").value
+        console.log(selected_city)
 
 
- function categoryChange(elementId) {
-    alert(document.getElementById("city_select").value);
+       for(var i=0; i < addr.length; i++) {
 
-    var seoul = ["종로구", "중구", "용산구", "성동구", "광진구", "동대문구", "중랑구", "성북구",
-                 "강북구", "도봉구", "노원구", "은평구", "서대문구", "마포구", "양천구", "강서구",
-                 "구로구", "금천구", "영등포구", "동작구", "관악구", "서초구", "강남구", "송파구", "강동구"]
+            if ( addr[i][0] == selected_city && addr[i][1] == selected_gu){
 
-    var select = document.getElementById(elementId);
-    var city = document.getElementById("city_select").value;
+                if( addr[i][2] == ""){
+	            }
+	            else{
+                    if (dong_list.indexOf(addr[i][2]) == -1){
+                        dong_list.push(addr[i][2]);
+                    };
+                }
+            };
+       };
 
-    if( city == "서울특별시") var d = seoul;
+       console.log(dong_list)
 
-    for (x in d){
-        var opt = document.createElement('option');
-        opt.value = d[x];
-        opt.innerHTML = d[x];
-        select.appendChild(opt);
+        // to create select options
+        for (i = 0; i < dong_list.length; i++){
+                var opt = document.createElement('option');
+                opt.value = dong_list[i];
+                opt.innerHTML = dong_list[i];
+                target.appendChild(opt);
+        };
+};
+
+
+    function printClock() {
+
+        var clock = document.getElementById("clock");            // 출력할 장소 선택
+        var currentDate = new Date();                                     // 현재시간
+        var calendar = currentDate.getFullYear() + "-" + (currentDate.getMonth()+1) + "-" + currentDate.getDate() // 현재 날짜
+        var amPm = 'AM'; // 초기값 AM
+        var currentHours = addZeros(currentDate.getHours(),2);
+        var currentMinute = addZeros(currentDate.getMinutes() ,2);
+        var currentSeconds =  addZeros(currentDate.getSeconds(),2);
+
+        if(currentHours >= 12){ // 시간이 12보다 클 때 PM으로 세팅, 12를 빼줌
+            amPm = 'PM';
+            currentHours = addZeros(currentHours - 12,2);
+        }
+
+        if(currentSeconds >= 50){// 50초 이상일 때 색을 변환해 준다.
+           currentSeconds = '<span style="color:#de1951;">'+currentSeconds+'</span>'
+        }
+        clock.innerHTML = currentHours+":"+currentMinute+":"+currentSeconds +" <span style='font-size:50px;'>"+ amPm+"</span>"; //날짜를 출력해 줌
+
+        setTimeout("printClock()",1000);         // 1초마다 printClock() 함수 호출
+}
+
+    function addZeros(num, digit) { // 자릿수 맞춰주기
+          var zero = '';
+          num = num.toString();
+          if (num.length < digit) {
+            for (i = 0; i < digit - num.length; i++) {
+              zero += '0';
+            }
+          }
+          return zero + num;
     }
- };
-
- function category_dong(elementId) {
-    alert(document.getElementById("gu_select").value);
 
 
-    var jong_gu = ["소공동", "회현동", "명동", "필동", "장충동" ,
-                   "광희동", "을지로동", "신당동", "다산동", "약수동",
-                   "청구동", "신당제5동", "동화동", "황학동", "중림동"]
-
-
-    var jong_ro_gu = ["청운효자동", "사직동", "삼청동", "부암동", "평창동",
-                      "무악동", "교남동", "가회동", "종로1.2.3.4가동", "종로5.6가동",
-                       "이화동", "혜화동", "창신제1동", "창신제2동", "창신제3동",
-                       "숭인제1동", "숭인제2동"]
-
-    var select = document.getElementById(elementId);
-    var city = document.getElementById("gu_select").value;
-
-    if( city == "중구") var d = jong_gu;
-
-    for (x in d){
-        var opt = document.createElement('option');
-        opt.value = d[x];
-        opt.innerHTML = d[x];
-        select.appendChild(opt);
-    }
- };

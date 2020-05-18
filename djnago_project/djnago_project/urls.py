@@ -22,12 +22,11 @@ app_name = 'webpage_app'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', webpage_app.views.index, name = 'index'),
+    # path('base/', webpage_app.views.base, name ='base'),
     path('weather/', webpage_app.views.weather, name = 'weather'),
     path('transportaion/', webpage_app.views.transportaion, name = 'transportaion'),
     path('get_weather/', webpage_app.views.get_weather, name="get_weather"),
-    path('hi/', webpage_app.views.test, name = "test"),
-    path('base/', webpage_app.views.basee, name="basee"),
-    path('address/', webpage_app.views.address, name='address')
+    path('address/', webpage_app.views.address, name='address'),
 ]
 
 
