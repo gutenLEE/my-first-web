@@ -17,7 +17,7 @@ class Weather_api:
         today_date = current_date_time[:8]
         current_time = current_date_time[8:]
 
-        key = 'PJsLmdbHRcHiLAUnsUfnTdZaIS0NFpR0Nndy82K1OQwLmf%2BVgvXhrkoeOMqTW6%2FdzOJQ5RbF%2FmDb7oocoMY%2BYQ%3D%3D'
+        key = ''
         url = f'http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtFcst?ServiceKey={key}&pageNo=&numOfRows=40&dataType=JSON&base_date={today_date}&base_time={current_time}&nx={nx}&ny={ny}&'
         parse_url = url.format(key, today_date, current_time, nx, ny)
 
@@ -66,7 +66,7 @@ class Weather_api:
         current_date_time = (datetime.datetime.today() - datetime.timedelta(hours=1)).strftime('%Y%m%d0200')
         today_date = current_date_time[:8]
         current_time = current_date_time[8:]
-        key = 'PJsLmdbHRcHiLAUnsUfnTdZaIS0NFpR0Nndy82K1OQwLmf%2BVgvXhrkoeOMqTW6%2FdzOJQ5RbF%2FmDb7oocoMY%2BYQ%3D%3D'
+        key = ''
         url = f'http://apis.data.go.kr/1360000/VilageFcstInfoService/getVilageFcst?ServiceKey={key}&pageNo=&numOfRows=40&dataType=JSON&base_date={today_date}&base_time={current_time}&nx={nx}&ny={ny}&'
         parse_url = url.format(key, today_date, current_time, nx, ny)
 
