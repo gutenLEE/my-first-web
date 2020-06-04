@@ -9,6 +9,7 @@ from django.http import HttpResponseRedirect
 from .models import test_db
 from .pymongoTEST import MongoManager
 from .WeatherAPI import Weather_api
+from .Station_db import STATN_NM, subway, bus_name_ID
 
 
 nx = 60
@@ -16,29 +17,8 @@ ny = 127
 
 def index(request):
 
-    # # 날씨 data 호출
-    # district_code = 1111051500
-    # url = f'http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone={district_code}'.format({}, district_code)
-    # xml_data = urlopen(url).read().decode('utf-8')
-    # json_data = xmltodict.parse(xml_data)
-    # json_weather = json_data['rss']['channel']['item']['description']['body']['data']
-    #
-    # weathers = [data for data in json_weather]
-    # tmp_list = []
-    # # 현재시간 + 3시간의 날씨만 추출
-    # for key, value in weathers[0].items():
-    #     tmp_list.append(value)
-    #
-    # # 현재기온, 하늘상태, 강수확률, 최저, 최고
-    # now_temp = tmp_list[3] +'℃'
-    # # max_temp = tmp_list[4]
-    # # min_temp = tmp_list[5]
-    # sky_status = tmp_list[8]
-    # rain_pop = tmp_list[10] + ' %'
-    #
-
     # 현재 기온 / default 서울
-    # 0:temp  1:sky status  2:precipitation  3:rain pop
+    # 0:temp / 1:sky status / 2:precipitation / 3:rain pop
     temp = Weather_api.get_current_weather(nx=60, ny=127)
     now_temp = temp[0] + '℃'
     sky_status = temp[1]
@@ -58,13 +38,12 @@ def index(request):
     x = xy['x']
     y = xy['y']
 
-
     #get max, min temp
     temp = Weather_api.get_max_min_temp(x, y)
     max_temp = temp['max_temp'] + '℃'
     min_temp = temp['min_temp'] + '℃'
 
-
+    # 전달할 데이터
     context = {
         'now_temp': now_temp,
         'sky_status': sky_status,
@@ -73,6 +52,9 @@ def index(request):
         'min_temp': min_temp,
         'cities': cities,
         'addre' : json_addre,
+        # 'STATN_NM' : simplejson.dumps(STATN_NM),
+        'test' : simplejson.dumps(subway),
+        'bus_name_ID': simplejson.dumps(bus_name_ID),
     }
     return render(request, 'index.html', context)
 
@@ -116,7 +98,8 @@ def weather(request):
 
 
 def transportaion(request):
-    return render(request, 'transportaion index.html')
+    print("지하철 정보", request.GET)
+    return render(request, 'transportaion_index.html')
 
 
 def get_weather(request):

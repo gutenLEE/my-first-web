@@ -22,6 +22,8 @@
             var addr = {{ addre|safe }};
             var gu_list = []
             var dong_list = []
+            var now_temp = {{now_temp}}
+
 <!--            var STATN_NM = {{ STATN_NM | safe }};-->
             var test = {{ test | safe }}
             var bus_name_ID = {{ bus_name_ID | safe }}
@@ -51,7 +53,7 @@
 
     {% block extra_head %}{% endblock %}
 </head>
-<body class="hold-transition sidebar-mini {% block body_class %}{% block bodyclass %}{% endblock %}{% endblock %}">
+<body onload="suggestion();" class="hold-transition sidebar-mini {% block body_class %}{% block bodyclass %}{% endblock %}{% endblock %}">
 
 {% block body %}
 <div class="wrapper">
@@ -152,22 +154,13 @@
                         <!-- /.교통 검색창 start -->
                         <div class="card-body" id="search">
                             <p>지하철 <code>.input-group.input-group-sm</code></p>
-                            <form autocomplete="off" method="get" action="{% url 'transportaion' %}">
-                                <div class="input-group input-group-sm">
-                                    <input type="text" id="myInput" placeholder="역 이름을 입력해주세요" required>
-                                    <span class="input-group-append">
-                                    <button type="submit" class="btn btn-info btn-flat">Go!</button>
-                                </span>
-                            </div>
+                            <form role="form" method="GET" action="{% url 'transportaion' %}" autocomplete="off" >
+                                <div class="input-group input-group-sm" id = "div_input">
+                                    <input type="text" name="myInput" id="myInput" placeholder="역 이름을 입력해주세요" required value="">
+                                    <button class="btn btn-info btn-flat" >Go!</button>
+                                </div>
                             </form>
-                            <p>버스 <code>.input-group.input-group-sm</code></p>
-                            <div class="input-group input-group-sm">
-                                <input type="text" id="busInput" placeholder="정류소 이름을 입력해주세요">
-                                <span class="input-group-append">
-                                    <button type="button" class="btn btn-info btn-flat">Go!</button>
-                                </span>
-                            </div>
-                         <!-- /input-group -->
+                            <!-- /input-group -->
                         </div>
                     </div>
                     <!--/.교통 검색창 end -->
@@ -202,7 +195,7 @@
                                         <div class="row">
                                             <div class="column", style="padding:10px;">
                                                 <h2 style="color:powderblue",> 기온 </h2>
-                                                <p><b> {{now_temp}} </b></p>
+                                                <p><b> {{now_temp}} ℃ </b></p>
                                             </div>
                                             <div class="column", style="padding:10px;">
                                                 <h4 style="color:powderblue"> 최고 </h4>
@@ -231,16 +224,9 @@
                             <!-- /.card -->
                             <div class="card">
                                 <div class="card-header border-0">
-                                    <p id="demo"></p>
+                                    <p id="suggestion", name = 'suggestion'> 옷 추천 </p>
+
                                     <button onclick="getLocation()">Try It</button>
-                                    <div class="card-tools">
-                                        <a href="#" class="btn btn-tool btn-sm">
-                                            <i class="fas fa-download"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-tool btn-sm">
-                                            <i class="fas fa-bars"></i>
-                                        </a>
-                                    </div>
                                 </div>
                             </div>
                             <!-- /.card -->
