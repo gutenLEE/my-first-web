@@ -1,48 +1,64 @@
 function autocomplete(inp, arr) {
-    console.log("okay autocomplete")
+    console.log("들어오긴해따ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ")
   /*the autocomplete function takes two arguments,
   the text field element and an array of possible autocompleted values:*/
   var currentFocus;
-
-  /*text 필드에 값이 발생하면 function starts:*/
+  /*execute a function when someone writes in the text field:*/
   inp.addEventListener("input", function(e) {
       var a, b, i, val = this.value;
-
       /*close any already open lists of autocompleted values*/
       closeAllLists();
-
       if (!val) { return false;}
       currentFocus = -1;
-
       /*create a DIV element that will contain the items (values):*/
       a = document.createElement("DIV");
       a.setAttribute("id", this.id + "autocomplete-list");
       a.setAttribute("class", "autocomplete-items");
-
       /*append the DIV element as a child of the autocomplete container:*/
       this.parentNode.appendChild(a);
-
       /*for each item in the array...*/
-      for (i = 0; i < arr.length; i++) {
+      for (i = 0; i < parse_station.length; i++) {
         /*check if the item starts with the same letters as the text field value:*/
-        if (arr[i][0].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
-
+        if (parse_station[i][0].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
           /*create a DIV element for each matching element:*/
           b = document.createElement("DIV");
-
           /*make the matching letters bold:*/
-          b.innerHTML = "<strong>" + arr[i][1]+ " " +arr[i][0].substr(0, val.length)+"</strong>";
-          b.innerHTML += arr[i][0].substr(val.length);
-
+          b.innerHTML = "<strong>" + parse_station[i][1]+ " " +parse_station[i][0].substr(0, val.length)+"</strong>";
+//          b.innerHTML += arr[i][0].substr(val.length);
+          b.append(parse_station[i][0].substr(val.length));
           /*insert a input field that will hold the current array item's value:*/
-          b.innerHTML += "<input type='hidden'  value='" + arr[i][0] + "'>";
-          b.innerHTML += "<input type='hidden'  value='" + arr[i][1] + "'>";
+          b.innerHTML += "<input type='hidden' value='" + parse_station[i][0] + "'/>";
+          b.innerHTML += "<input type='hidden' value='" + parse_station[i][1] + "'/>";
+          b.innerHTML += "<input type='hidden' value='" + parse_station[i][2] + "'/>";
 
           /*execute a function when someone clicks on the item value (DIV element):*/
               b.addEventListener("click", function(e) {
+
               /*insert the value for the autocomplete text field:*/
-              inp.value = this.getElementsByTagName("input")[0].value + "역";
-              inp.appendChild(b)
+              inp.value = this.getElementsByTagName("input")[0].value;
+              var line = this.getElementsByTagName("input")[1].value;
+              var line_cd = this.getElementsByTagName("input")[2].value;
+
+              var insert = document.createElement("input");
+              insert.setAttribute("type", "hidden");
+              insert.setAttribute("value", line_cd);
+              insert.setAttribute("name", "line_code");
+
+              var rara = document.getElementById("div_input")
+              rara.appendChild(insert)
+
+              console.log(line_cd)
+
+              var jeval = document.getElementById("myInput")
+              jeval.innerHTML = "<input type='hidden' name='ma' id='ma' value='" + line + "'/>";
+//              jeval.innerHTML = "<input type='hidden' name='ma2' id='ma2' value='" +  line_cd + "'/>";
+//            var inpu = document.getElementById("ma2")
+
+              console.log(inp.value)
+              inp.append(inp.value, line, line_cd)
+
+              alert(inp.value + line)
+
 
               /*close the list of autocompleted values,
               (or any other open lists of autocompleted values:*/

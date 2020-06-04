@@ -12,6 +12,9 @@
     <meta http-equiv="X-UA-COMPATIBLE" content="IE=edge">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <style>
+        table, th, td {
+            border: 1px solid black;
+        }
         #search {
             background-color : pink;
         }
@@ -22,17 +25,99 @@
         #time{
             box-sizing:130*40;
         }
+        .set{
+            left: 50%;
+            text-align:center;
+
+        }
+        .countdownContainer{
+            text-align: center;
+            background: #ddd;
+        }
+        .info{
+            font-size: 60px;
+        }
+        .w_info{
+            font-size:20px;
+            text-align:center;
+        }
+        .materials{
+            font-size:30px;
+            text-align:center;
+        }
+
     </style>
     <script type="text/javascript" src = "{% static 'clock.js' %}"></script>
 
-    <script type="text/javascript">
+    <script>
+        var event_hour = {{ event_hour | safe }}
+        var event_minute = {{ event_minute |safe }}
+
+        var now_temp = {{ realtime_temp }}
+        var pop = {{ pop }}
+
+        var arv_Msg = {{ arv_Msg | safe }}
+        var arv_Msg2 = {{ arv_Msg2 | safe }}
+        var last_LineNm = {{ last_LineNm | safe }}
+        var up_Line = {{ up_Line | safe }}
+        var station ="{{ station }}"
+        var subway_line = "{{ subway_line }}"
+        var line_code = {{ line_code }}
+        var result = {{ result | safe }};
+
+        var up = {{ up | safe }};
+        var down = {{ down | safe }};
+
         document.addEventListener("DOMContentLoaded", function() {
-            realTimer();
-            setInterval(realTimer, 500);
+            countdown();
         });
+
+        function umbrella(){
+            if (pop > 50){
+                var target = document.getElementById("umbrella")
+                target.innerText = '우산 챙겨요!'
+            }
+            else if(pop < 50){
+                alert("fuc")
+                var target = document.getElementById("umbrella")
+                target.innerText = '필요없음!'
+            };
+
+                 alert(now_temp)
+            if ( now_temp < 5){
+                  var target = document.getElementById("clothing")
+                  target.innerHTML = "현재 너무 추워요.<br> 패딩, 두꺼운코트,<br> 목도리, 기모가 좋겠네요"
+            }
+            else if ( 5 <= now_temp && now_temp < 9){
+                  var target = document.getElementById("clothing")
+                  target.innerHTML = "현재 추워요.<br>  코트,경량패딩, 히트텍,<br> 니트, 레깅스가 좋겠네요"
+
+            }
+            else if ( 9 <= now_temp && now_temp < 17){
+                  var target = document.getElementById("clothing")
+                  target.innerHTML = "현재 쌀쌀해요.<br> 자켓, 트렌치코트,<br>야상, 니트, 청바지가 좋겠네요"
+
+            }
+            else if ( 17 <= now_temp && now_temp < 20){
+                  var target = document.getElementById("clothing")
+                  target.innerHTML = "현재 서늘해요.<br> 맨투맨, 얇은 니트, 가디건,<br> 청바지가 좋겠네요"
+
+            }
+            else if ( 20<= now_temp && now_temp < 23){
+                  var target = document.getElementById("clothing")
+                  target.innerHTML = "현재 선선해요.<br> 긴팔티, 얇은 가디건,<br> 면바지, 청바지가 좋겠네요"
+
+            }
+            else if (23 <= now_temp && now_temp < 26){
+                  var target = document.getElementById("clothing")
+                  target.innerHTML =  "<td class = 'outfit' >" + "반팔, 얇은 셔츠,<br> 반바지, 면바지가<br> 좋겠네요" +"</td>";
+            }
+            else if ( now_temp <= 26){
+                  var target = document.getElementById("clothing")
+                  target.innerHTML ="현재 기온 더워요<br> 민소매, 반바지,<br> 원피스가 좋겠네요"
+            };
+        };
     </script>
-
-
 
     {% endblock %}
 
@@ -42,7 +127,7 @@
 
     {% block extra_head %}{% endblock %}
 </head>
-<body class="hold-transition sidebar-mini {% block body_class %}{% block bodyclass %}{% endblock %}{% endblock %}">
+<body onload='umbrella(); bring_data(result); timetable(up, down);' class="hold-transition sidebar-mini {% block body_class %}{% block bodyclass %}{% endblock %}{% endblock %}">
 
 {% block body %}
 <div class="wrapper">
@@ -83,60 +168,145 @@
             {% block content_block_wrap %}
             {% block content %}
             <!-- Main content -->
-            <div class="content">
+            <div class="countdownContainer">
                 <!-- clock elements -->
                 <div class="card card-primary">
                     <div class="card-header">
-                        <h3 class="card-title">현재 시간</h3>
+                        <h3 class="card-title">카운트다운</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i></button>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
+                                <i class="fas fa-times"></i></button>
+                        </div>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body">
-                          <h1 id="clock"><span id="nowTimes"></span></h1>
+                    <div class="card-body" id="alarm" >
+                          <table class="set">
+                              <tr>
+                                  <td colspan="4" style="text-align:left;"><strong>{{ event_hour }}시 {{ event_minute }}분 까지 남은 시간</strong></td>
+                              </tr>
+                              <tr class="info" >
+                                  <td id="hours">4</td>
+                                  <td id="minutes">34</td>
+                                  <td id="seconds">32</td>
+                              </tr>
+                              <tr class="info">
+                                  <td>시간</td>
+                                  <td>분</td>
+                                  <td>초</td>
+                              </tr>
+                          </table>
                     </div>
                     <!-- /.card-body -->
                 </div>
-                <!-- general form elements -->
+                <!-- weather elements -->
                 <div class="card card-primary">
                     <div class="card-header">
-                        <h3 class="card-title">출근 정보 입력</h3>
+                        <h3 class="card-title">날씨</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i></button>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
+                                <i class="fas fa-times"></i></button>
+                        </div>
                     </div>
                     <!-- /.card-header -->
-                    <!-- form start -->
-                    <form role="form">
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label for="time" style="margin-right:15px;">외출 시간</label>
-                                <input id="time" type="time" value="xxx" min="yyy" max="zzz">
-                            </div>
-                            <div class="form-group">
-                                <label for="exampleInputPassword1">Password</label>
-                                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-                            </div>
-                            <div class="form-group">
-                                <label for="exampleInputFile">File input</label>
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="exampleInputFile">
-                                        <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                                    </div>
-                                    <div class="input-group-append">
-                                        <span class="input-group-text" id="">Upload</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                            </div>
+                    <div class="card-body" id="weather" >
+                        <div class="row">
+                            <table>
+                                <tr>
+                                    <td colspan="6" style="text-align:left;">날씨</td>
+                                </tr>
+                                  <tr class="w_info">
+                                      <td id="now_temp">현재 기온</td>
+                                      <td id="max_temp">최저</td>
+                                      <td id="min_temp">최고</td>
+                                      <td id="sky">하늘상태</td>
+                                      <td id="pop">강수확률</td>
+                                      <td id="precipitation">강수량</td>
+                                  </tr>
+                                  <tr class="w_info">
+                                      <td>{{ realtime_temp }} ℃</td>
+                                      <td>{{min_temp}} ℃</td>
+                                      <td>{{max_temp}} ℃</td>
+                                      <td>{{ realtime_sky }}</td>
+                                      <td>{{ pop }}%</td>
+                                      <td>{{ realtime_precipitation }}</td>
+                                  </tr>
+                            </table>
+                            <table>
+                                <tr>
+                                    <td colspan="4" style="text-align:left;">준비물</td>
+                                </tr>
+                                <tr class="materials" id="materials">
+                                    <td >옷</td>
+                                    <td >자외선</td>
+                                    <td >우산</td>
+                                </tr>
+                                <tr class="materials">
+                                    <td id="clothing">기모</td>
+                                    <td id="sunstick">23</td>
+                                    <td id="umbrella">24</td>
+                                </tr>
+                            </table>
                         </div>
-                        <!-- /.card-body -->
-
-                        <div class="card-footer">
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </div>
-                    </form>
+                    </div>
+                    <!-- /.card-body -->
                 </div>
-                <!-- /.card -->
+                  <!-- subway elements -->
+                    <div class="card card-primary" style="margin-top:16px;" >
+                        <div class="card-header">
+                            <h3 class="card-title">{{subway_line}} {{station}}역</h3>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                    <i class="fas fa-minus"></i></button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
+                                    <i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body" id="realtime_subway" >
+                            <table class="set" >
+                                <tr>
+                                    <td colspan="3" style="text-align:left;">실시간 도착 정보</td>
+                                </tr>
+                                <tr class="w_info" >
+                                    <td >상행/내선</td>
+                                    <td >{{station}}역</td>
+                                    <td >하행/외선</td>
+                                </tr>
+                                <tr class="w_info">
+                                    <td id="up"></td>
+                                    <td id="station"></td>
+                                    <td id="down"></td>
+                                </tr>
+                                    <tr class="w_info">
+                                    <td id="up2"></td>
+                                    <td id="station2"></td>
+                                    <td id="down2"></td>
+                                </tr>
+                            </table>
+                            <table class="set">
+                                <tr>
+                                    <td colspan="3" style="text-align:left;">{{ event_hour}}시 {{ event_minute }}분 전,후 15분 사이 도착하는 열차입니다</td>
+                                </tr>
+                                <tr class="w_info" >
+                                    <td >상행/내선</td>
+                                    <td >{{station}}역</td>
+                                    <td >하행/외선</td>
+                                </tr>
+                                <tr class="w_info">
+                                    <td id="upp"></td>
+                                    <td id="empty"></td>
+                                    <td id="downn"></td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                   <!-- /.card-body -->
             </div>
             <!-- /.content -->
             {% endblock %}

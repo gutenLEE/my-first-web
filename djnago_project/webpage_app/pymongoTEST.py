@@ -8,7 +8,7 @@ class MongoManager:
     collection = client['test_db']['kor_district_code']
     second = collection.find({}, {"1단계": True, '2단계': True, '3단계': True})
 
-    def get_XY(city, gu="", dong=""):
+    def get_XY(city, gu, dong):
 
         client = pymongo.MongoClient('localhost', 27017)
         collection = client['test_db']['kor_district_code']

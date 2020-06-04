@@ -15,35 +15,40 @@
         #search {
             background-color : pink;
         }
+        #clock{
+            font-size: 5.5rem;
+            text-align:center;
+        }
+        #time{
+            box-sizing:130*40;
+        }
+        #location{
+            border-top: 0.05rem solid pink;
+            border-bottom: 0.05rem solid pink;
+        }
     </style>
+    <script type="text/javascript" src = "{% static 'clock.js' %}"></script>
+    <script type="text/javascript" src = "{% static 'categoryChange.js' %}"></script>
     <script type="text/javascript" src = "{% static 'auto_station.js' %}"></script>
     <script type="text/css" src = "{% static 'autocomplete_css.css' %}"></script>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            realTimer();
+            setInterval(realTimer, 500);
+        });
+    </script>
     <script>
-            var addr = {{ addre|safe }};
-            var gu_list = []
-            var dong_list = []
-            var now_temp = {{now_temp}}
+        var addr = {{ addre|safe }};
+        var cities = {{ cities | safe }};
+        var test = {{ test| safe }};
+        var parse_station = {{ parse_station | safe}};
 
-<!--            var STATN_NM = {{ STATN_NM | safe }};-->
-            var test = {{ test | safe }}
-            var bus_name_ID = {{ bus_name_ID | safe }}
 
-            var x = document.getElementById("demo");
-            function getLocation() {
-              if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition);
-              } else {
-                x.innerHTML = "Geolocation is not supported by this browser.";
-              }
-            }
-
-            function showPosition(position) {
-              x.innerHTML = "Latitude: " + position.coords.latitude +
-              "<br>Longitude: " + position.coords.longitude;
-            }
+        var gu_list = []
+        var dong_list = []
 
     </script>
-    <script type="text/javascript" src = "{% static 'categoryChange.js' %}"></script>
 
     {% endblock %}
 
@@ -53,7 +58,7 @@
 
     {% block extra_head %}{% endblock %}
 </head>
-<body onload="suggestion();" class="hold-transition sidebar-mini {% block body_class %}{% block bodyclass %}{% endblock %}{% endblock %}">
+<body class="hold-transition sidebar-mini {% block body_class %}{% block bodyclass %}{% endblock %}{% endblock %}">
 
 {% block body %}
 <div class="wrapper">
@@ -95,16 +100,37 @@
             {% block content %}
             <!-- Main content -->
             <div class="content">
-                <div class="row">
-                    <!---지역선택--->
-                    <div class="card card-secondary" style="margin:20px;">
-                        <div class="card-header">
-                            <h3 class="card-title">당신의 동네는 어디오?</h3>
-                        </div>
-                        <!-- /.card-header -->
+                <!-- clock elements -->
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">현재 시간</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                          <h1 id="clock"><span id="nowTimes"></span></h1>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- general form elements -->
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">출근 정보 입력</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <!-- form start -->
+                    <form role="form" action = "{% url 'show' %}" method="get">
                         <div class="card-body">
-                            <form role="form" method="GET" action = "{% url 'get_weather' %}">
-                                <div class="row">
+                            <div class="form-group">
+                                <label for="real_time" style="margin-right:15px;">외출 시간</label>
+                                <input class="real_time" id="real_time" name="real_time" type="time" value="xxx" min="yyy" max="zzz" required>
+                            </div>
+                            <div class="form-group" >
+                                <label for="home_time" style="margin-right:15px;">퇴근 시간</label>
+                                <input class="home_time" id="home_time" name="home_time" type="time" value="xxx" min="yyy" max="zzz">
+                            </div>
+                            <div class="form-group" id="location" name="location">
+                                <label for="location" style="margin-top:15px">당신의 동네는 어디오?</label>
+                                <div class="row" >
                                     <div class="row-sm-7">
                                         <!-- select 도시 -->
                                         <div class="form-group" style="padding:10px;">
@@ -134,145 +160,33 @@
                                                 <option disabled="True" selected>---</option>
                                             </select>
                                         </div>
-                                        <!-- button 조회 -->
-                                        <div class = "row-sm-5">
-                                            <div class="button">
-                                                <input type="Submit" name="submit" value="조회"/>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputFile">지하철 역</label>
+                                <!-- /.교통 검색창 start -->
+                                <div class="card-body" id="search">
+                                    <p>지하철 <code></code></p>
+                                    <div class="autocomplete" style="width:300px;" id = "div_input">
+                                        <input type="text" name="myInput" id="myInput" placeholder="역 이름을 입력해주세요" required value="">
+                                    </div>
+                                </div>
+                                <!--/.교통 검색창 end -->
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                            </div>
                         </div>
                         <!-- /.card-body -->
-                    </div>
-                    <!---검색어 입력 시작--->
-                    <div class="card card-secondary" style="margin:20px;">
-                        <div class="card-header">
-                            <h3 class="card-title">지하철 역 / 버스 정류소</h3>
+
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">Submit</button>
                         </div>
-                        <!-- /.교통 검색창 start -->
-                        <div class="card-body" id="search">
-                            <p>지하철 <code>.input-group.input-group-sm</code></p>
-                            <form role="form" method="GET" action="{% url 'transportaion' %}" autocomplete="off" >
-                                <div class="input-group input-group-sm" id = "div_input">
-                                    <input type="text" name="myInput" id="myInput" placeholder="역 이름을 입력해주세요" required value="">
-                                    <button class="btn btn-info btn-flat" >Go!</button>
-                                </div>
-                            </form>
-                            <!-- /input-group -->
-                        </div>
-                    </div>
-                    <!--/.교통 검색창 end -->
+                    </form>
                 </div>
-                <!--날씨 출력 시작 -->
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="card">
-                                <div class="card-header border-0">
-                                    <div class="d-flex justify-content-between">
-                                        <h3 class="card-title">날씨 요약</h3>
-                                        <a class="detail-link" href="{% url 'weather' %}">더보기</a>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="d-flex">
-                                        <p class="d-flex flex-row">
-                                            {% date as day %}
-                                            <span class="text-bold text-lg" style="margin-right : 10px;">{{ day }}</span>
-                                            {% today as tim %}
-                                        </p>
-                                        <p class="ml-auto d-flex flex-column text-right">
-                                                    <span class="text-success">
-                                                      <i class="fas fa-arrow-up"></i> 12.5%
-                                                    </span>
-                                            <span class="text-muted">Since last week</span>
-                                        </p>
-                                    </div>
-                                    <!-- /.d-flex -->
-                                    <div class="position-relative mb-4">
-                                        <div class="row">
-                                            <div class="column", style="padding:10px;">
-                                                <h2 style="color:powderblue",> 기온 </h2>
-                                                <p><b> {{now_temp}} ℃ </b></p>
-                                            </div>
-                                            <div class="column", style="padding:10px;">
-                                                <h4 style="color:powderblue"> 최고 </h4>
-                                                <p><b> {{max_temp}} </b></p>
-                                            </div>
-                                            <div class="column", style="padding:10px;">
-                                                <h4 style="color:powderblue"> 최저 </h4>
-                                                <p><b> {{min_temp}} </b></p>
-                                            </div>
-                                        </div>
-                                        <h3 style="color:powderblue"> 하늘상태 </h3>
-                                        <p><b> {{sky_status}} </b></p>
-                                        <h3 style="color:powderblue"> 강수확률 </h3>
-                                        <p><b> {{rain_pop}} </b></p>
-                                    </div>
-                                    <div class="d-flex flex-row justify-content-end">
-                                              <span class="mr-2">
-                                                <i class="fas fa-square text-primary"></i> This Week
-                                              </span>
-                                        <span>
-                                                <i class="fas fa-square text-gray"></i> Last Week
-                                              </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- /.card -->
-                            <div class="card">
-                                <div class="card-header border-0">
-                                    <p id="suggestion", name = 'suggestion'> 옷 추천 </p>
-
-                                    <button onclick="getLocation()">Try It</button>
-                                </div>
-                            </div>
-                            <!-- /.card -->
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="card">
-                                <div class="card-header border-0">
-                                    <div class="d-flex justify-content-between">
-                                        <h3 class="card-title">교통 요약</h3>
-                                        <a class="detail-link" href="{% url 'transportaion' %}">더보기</a>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="d-flex">
-                                        <p class="d-flex flex-column">
-                                            <span class="text-bold text-lg">820</span>
-                                            <span>Visitors Over Time</span>
-                                        </p>
-                                        <p class="ml-auto d-flex flex-column text-right">
-                                                    <span class="text-success">
-                                                      <i class="fas fa-arrow-up"></i> 12.5%
-                                                    </span>
-                                            <span class="text-muted">Since last week</span>
-                                        </p>
-                                    </div>
-                                    <!-- /.d-flex -->
-                                    <div class="position-relative mb-4">
-                                        <canvas id="visitors-chart" height="200"></canvas>
-                                    </div>
-
-                                    <div class="d-flex flex-row justify-content-end">
-                                              <span class="mr-2">
-                                                <i class="fas fa-square text-primary"></i> This Week
-                                              </span>
-                                        <span>
-                                                <i class="fas fa-square text-gray"></i> Last Week
-                                              </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- /.card -->
-                        </div>
-                        <!-- /.col-md-6 -->
-                    </div>
-                    <!-- /.row -->
-                </div><!-- /.container-fluid -->
+                <!-- /.card -->
             </div>
             <!-- /.content -->
             {% endblock %}
@@ -298,6 +212,6 @@
 {% block extra_foot %}{% endblock %}
 </body>
 <script>
- autocomplete(document.getElementById("myInput"), test);
+autocomplete(document.getElementById("myInput"), parse_station);
 </script>
 </html>
