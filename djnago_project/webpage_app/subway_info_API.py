@@ -38,12 +38,6 @@ client = MongoClient('localhost', 27017)
 db = client['test_db']
 collection_currency = db['subwayCode']
 
-# with open('subway_code.json',encoding='UTF8') as f:
-#     file_data = json.load(f)
-
-# collection_currency.insert_one(file_data)
-# client.close()
-
 line_num = []
 data = collection_currency.find({})
 for data in collection_currency.find({}):
@@ -67,20 +61,6 @@ for line in line_num:
             parse_station.append([a, b, c, d])
 
 
-##########################################################################
-
-
-def timeTable(code, in_out):
-    client = MongoClient('localhost', 27017)
-    db = client['test_db']
-    collection = db['Subway_collection']
-    myquery = {'station_code': code}
-    inout = {in_out: True}
-    aa = collection.find_one(myquery, inout)
-    print(aa[in_out])
-    return aa[in_out]
-
-
 class Timetable:
 
     def __init__(self):
@@ -89,7 +69,6 @@ class Timetable:
         self.collection = db['Subway_collection']
 
     def getIndays(self, code):
-
         myquery = {'station_code': code}
         timeData = self.collection.find_one(myquery, {'in_days': True})
         return timeData['in_days']
@@ -120,34 +99,64 @@ class Timetable:
         return timeData['out_Weekend']
 
 
-# 서울시 역코드로 지하철역별 열차 도착 정보 검색 (역명포함)
-# 평일:1, 토요일:2, 휴일/일요일:3
-# 상행,내선:1, 하행,외선:2
-# (G:일반(general) D: 급행(direct))
+class TimeStrManager:
 
-# def get_timeTable(code, week_tag, inout_tag):
-#     key = '546a717361626e6d39374c64714b74'
-#     # code = '0311'
-#     url = f'http://openAPI.seoul.go.kr:8088/{key}/json/SearchSTNTimeTableByIDService/1/500/{code}/{week_tag}/{inout_tag}/'
-#     parse_url = url.format(key, code)
-#     request = urlopen(parse_url)
-#     data = request.read().decode('utf8')
-#     json_data = json.loads(data)
-#     time_table = json_data['SearchSTNTimeTableByIDService']['row']
-#
-#     # 역 시간표 리스트
-#     timeStrList = []
-#     test = []
-#     for time in time_table:
-#         timeStrList.append(time['ARRIVETIME'])
-#         a = time['ARRIVETIME']
-#         b = time['SUBWAYSNAME']
-#         c = time['SUBWAYENAME']
-#         d = time['EXPRESS_YN']
-#
-#         test.append([a, b, c, d])
-#
-#     return test
+    def __init__(self, UserTimeStr):
+        self.Thistime = datetime.datetime.strptime(UserTimeStr, '%H:%M:%S')
+
+    def add_minutes(self, minutes):
+        after = self.Thistime + datetime.timedelta(minutes)
+        time = after.strftime('%H:%M:%S')
+        
+        hour = int(time[0:2])
+        minutes = int(time[3:5])
+        sec = int(time[6:8])
+
+        return hour, minutes, sec
+
+    def sub_minutes(self, minutes):
+        self.before = self.Thistime - datetime.timedelta(minutes)
+        time = self.before.strftime('%H:%M:%S')
+        hour = int(time[0:2])
+        minutes = int(time[3:5])
+        sec = int(time[6:8])
+
+        return hour, minutes, sec
+
+    def time_in_range(start, end, x):
+        """Return true if x is in the range [start, end]
+           x is user input time"""
+        if start <= end:
+            return start <= x <= end
+        else:
+            return start <= x or x <= end
+
+    def timetable_in_range(self, test):
+        self.timeStr_result = []
+
+        for timeStr in test:
+            hour = int(timeStr[0][0:2])
+            minutes = int(timeStr[0][3:5])
+            sec = int(timeStr[0][6:8])
+
+            if hour == 24 or hour == 25:
+                hour = 0
+
+            after = self.add_minutes(minutes=15)
+            before = self.sub_minutes(minutes=15)
+
+            start = datetime.time(before[0], before[1], before[2])
+            end = datetime.time(after[0], after[1], after[2])
+            result = time_in_range(start, end, datetime.time(hour, minutes, sec))
+
+            if result is True:
+                self.timeStr_result.append(timeStr)
+
+        return self.timeStr_result
+
+aa = TimeStrManager(UserTimeStr="13:10:00")
+resutl = aa.add_minutes(minutes=12)
+print(resutl)
 
 
 def addsub_minutes(UserTimeStr, bool):
@@ -197,6 +206,7 @@ def timetable_in_range(UserTimeStr, test):
             timeStr_result.append(timeStr)
 
     return timeStr_result
+
 
 # UserTimeStr = "22:55:00"
 # timeStrList = timeTable(code='0311', in_out='in_days')
