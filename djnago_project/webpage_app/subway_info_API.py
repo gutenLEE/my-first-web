@@ -20,7 +20,7 @@ def realtime_sub_Info(a, b):
     print(a)
     line = b
     # station = name
-    key = '546a717361626e6d39374c64714b74'
+    key = ''
     station_NM = quote(station)
 
     url = f'http://swopenapi.seoul.go.kr/api/subway/{key}/xml/realtimeStationArrival/0/20/{station_NM}'
