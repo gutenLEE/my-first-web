@@ -19,8 +19,7 @@
   };
 
 
-        // 1자리수의 숫자인 경우 앞에 0을 붙여준다.
-
+    // 1자리수의 숫자인 경우 앞에 0을 붙여준다.
 	function addzero(num) {
 
 		if(num < 10) { num = "0" + num; }
@@ -29,6 +28,7 @@
 
 	};
 
+    // Target 시간으로까지 남은 시간 timer
 	function countdown(){
 	    var now = new Date();
 	    var year = now.getFullYear();
@@ -71,6 +71,7 @@
 	    setTimeout(countdown, 1000);
 	};
 
+
 	function alarm(){
 	    var target = document.getElementById("alarm")
 	    target.style.backgroundColor = "#A52A2A";
@@ -81,16 +82,13 @@
 	    target.style.backgroundColor = "#FFFAF0";
 	};
 
-     function bring_data(realtimeStationArrival){
-        alert("hello");
+
+     //지하철 실시간 도착정보
+     function bring_data(realtimeStationArrival, subway_line){
 
         var result = realtimeStationArrival
-
-        var up = [];
-        var down = [];
-        var outbound = [];
-        var inbound = [];
-        var count = 0;
+        var line = getTargetStation(subway_line);
+        alert(line)
 
         if( result == 0 ){
              var target = document.getElementById("station");
@@ -99,40 +97,51 @@
 
         for(i=0; i < result.length; i++){
 
-            if(result[i]['updnLine'] == '상행' || result[i]['updnLine'] == '내선'){
+            // 예) 건대입구 2호선, 7호선 판별하기
+            if (line == result[i]['subwayId']){
 
-                var target = document.getElementById("up");
-                var new_span = document.createElement('li');
-                new_span.innerHTML = "<strong class = 'subway_info' >" + result[i]['arvlMsg2'] +"</strong>";
-                target.appendChild(new_span);
+                // 상행, 내선
+                if(result[i]['updnLine'] == '상행' || result[i]['updnLine'] == '내선'){
 
-                var target2 = document.getElementById("up2");
-                var new_span2 = document.createElement('li');
-                new_span2.innerHTML = "<strong class = 'subway_info' >" + result[i]['arvlMsg3'] +"</strong>";
-                target2.appendChild(new_span2);
+                    var target = document.getElementById("up");
+                    var new_span = document.createElement('li');
+                    new_span.innerHTML = "<strong class = 'subway_info' >" + result[i]['arvlMsg2'] +"</strong>";
+                    target.appendChild(new_span);
 
-            };
-            if(result[i]['updnLine'] == '하행' || result[i]['updnLine'] == '외선'){
-                var target = document.getElementById("down");
-                var new_span = document.createElement('li');
-                new_span.innerHTML = "<strong class = 'subway_info' >" + result[i]['arvlMsg2'] +"</strong>";
-                target.appendChild(new_span);
+                    var target2 = document.getElementById("up2");
+                    var new_span2 = document.createElement('li');
+                    new_span2.innerHTML = "<strong class = 'subway_info' >" + result[i]['arvlMsg3'] +"</strong>";
+                    target2.appendChild(new_span2);
+                };
+                // 하행, 외선
+                if(result[i]['updnLine'] == '하행' || result[i]['updnLine'] == '외선'){
+                    var target = document.getElementById("down");
+                    var new_span = document.createElement('li');
+                    new_span.innerHTML = "<strong class = 'subway_info' >" + result[i]['arvlMsg2'] +"</strong>";
+                    target.appendChild(new_span);
 
-                var target2 = document.getElementById("down2");
-                var new_span2 = document.createElement('li');
-                new_span2.innerHTML = "<strong class = 'subway_info' >" + result[i]['arvlMsg3'] +"</strong>";
-                target2.appendChild(new_span2);
+                    var target2 = document.getElementById("down2");
+                    var new_span2 = document.createElement('li');
+                    new_span2.innerHTML = "<strong class = 'subway_info' >" + result[i]['arvlMsg3'] +"</strong>";
+                    target2.appendChild(new_span2);
+                };
+
             };
         };
      };
 
+
+
   function fcstTrainFontColor() {
     var target = document.getElementsByClassName("subway_info")
-    target.style.color="Red";
+    target.style.color = "#A52A2A";
   }
+
+
 
 // 설정된 시간의 += 15분 내의 지하철 시간표
   function timetable(up, down){
+
         var left_time = [];
 
         var now = new Date();
@@ -141,51 +150,53 @@
 		var h = now.getHours();
 
 		console.log(s, m, h)
-    //  상행선 시간표
-    for(i=0; i < up.length; i ++){
 
-        var target = document.getElementById("upp");
-        var new_span = document.createElement('li');
+        //  상행선 시간표
+        for(i=0; i < up.length; i ++){
 
-        var time = up[i][0].split(':')
-        var arriveTime = time[0] + " 시 " + time[1] + " 분"
-        var heading = " (" + up[i][2] + " 행)"
+            var target = document.getElementById("upp");
+            var new_span = document.createElement('li');
 
-        new_span.innerHTML = "<strong class = 'subway_info' >" + arriveTime + heading +"</strong>";
-        target.appendChild(new_span);
+            var time = up[i][0].split(':')
+            var arriveTime = time[0] + " 시 " + time[1] + " 분"
+            var heading = " (" + up[i][2] + " 행)"
 
-        // H : M : S
-        var target_time = up[i][0].split(':')
-        console.log(target_time)
-        console.log(target_time[0]-h)
-    };
-    //  하행선 시간표
-    for(i=0; i < down.length; i ++){
-        var target = document.getElementById("downn");
-        var new_span = document.createElement('li');
+            new_span.innerHTML = "<strong class = 'subway_info' >" + arriveTime + heading +"</strong>";
+            target.appendChild(new_span);
 
-        var time = down[i][0].split(':')
-        var arriveTime = time[0] + " 시 " + time[1] + " 분"
-        var heading = " (" + down[i][2] + " 행)"
+            // H : M : S
+            var target_time = up[i][0].split(':')
+            console.log(target_time)
+            console.log(target_time[0]-h)
+        };
 
-        new_span.innerHTML = "<strong class = 'subway_info' >" + arriveTime + heading +"</strong>";
-        target.appendChild(new_span);
+        //  하행선 시간표
+        for(i=0; i < down.length; i ++){
+            var target = document.getElementById("downn");
+            var new_span = document.createElement('li');
 
-        //  H : M : S
-        var target_time = down[i][0].split(':')
-        console.log(target_time)
-        console.log(target_time[0]-h)
-    };
+            var time = down[i][0].split(':')
+            var arriveTime = time[0] + " 시 " + time[1] + " 분"
+            var heading = " (" + down[i][2] + " 행)"
+
+            new_span.innerHTML = "<strong class = 'subway_info' >" + arriveTime + heading +"</strong>";
+            target.appendChild(new_span);
+
+            //  H : M : S
+            var target_time = down[i][0].split(':')
+            console.log(target_time)
+            console.log(target_time[0]-h)
+        };
   };
 
+    // 날씨에 따른 준비물, 옷 종류 추천
+   function recommendClothing(pop, now_temp, fineDust){
 
-   function recommendClothing(pop, now_temp, findDust){
-
-            if(findDust[0] > 60 && findDust[1] > 70){
+            if(fineDust[0] > 60 && fineDust[1] > 70){
                 var target = document.getElementById("mask")
                 target.innerText = "KF90 마스크 챙기세요"
             }
-            if(findDust[0] < 50 && findDust[1] < 50){
+            if(fineDust[0] < 50 && fineDust[1] < 50){
                 var target = document.getElementById("mask")
                 target.innerText = "필요없어요"
             }
@@ -232,3 +243,56 @@
             };
 
         };
+
+
+    // 중복 지하철 이름 처리하기
+    function getTargetStation(subway_line){
+        var station = subway_line
+
+        if (station == '01호선' || station =='의정부경전철'|| station =='인천선'|| station=='인천2호선'){
+           line_code = '1001'
+        }
+        else if(station == '02호선'){
+            line_code = '1002'
+        }
+        else if(station == '03호선'){
+            line_code = '1003'
+        }
+        else if(station == '04호선'){
+            line_code = '1004'
+        }
+        else if(station == '05호선'){
+            line_code = '1005'
+        }
+        else if(station == '06호선'){
+            line_code = '1006'
+        }
+        else if(station == '07호선'){
+            line_code = '1007'
+        }
+        else if(station == '08호선'){
+            line_code = '1008'
+        }
+        else if(station == '09호선'){
+            line_code = '1009'
+        }
+        else if(station == '경의선'){
+            line_code = '1063'
+        }
+        else if(station == '공항철도'){
+            line_code = '1065'
+        }
+        else if(station == '경춘선'){
+            line_code = '1067'
+        }
+        else if(station == '수인선'){
+            line_code = '1071'
+        }
+        else if(station == '분당선'){
+            line_code = '1075'
+        }
+        else if(station == '신분당선'){
+            line_code = '1077'
+        }
+        return line_code
+    };
