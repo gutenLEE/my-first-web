@@ -9,8 +9,11 @@
 
     {% block meta %}
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
     <meta http-equiv="X-UA-COMPATIBLE" content="IE=edge">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+
     <style>
         #search {
             background-color : pink;
@@ -26,6 +29,185 @@
             border-top: 0.05rem solid pink;
             border-bottom: 0.05rem solid pink;
         }
+        #map{
+            background-color : gray;
+        }
+       
+        .form-style-5{
+            max-width: 500px;
+            padding: 10px 20px;
+            background: #f4f7f8;
+            margin: 10px auto;
+            padding: 20px;
+            background: #f4f7f8;
+            border-radius: 8px;
+            font-family: Georgia, "Times New Roman", Times, serif;
+        }
+        .form-style-5 fieldset{
+            border: none;
+        }
+        .form-style-5 legend {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+        }
+        .form-style-5 label {
+            display: block;
+            margin-bottom: 8px;
+        }
+        .form-style-5 input[type="text"],
+        .form-style-5 input[type="date"],
+        .form-style-5 input[type="datetime"],
+        .form-style-5 input[type="email"],
+        .form-style-5 input[type="number"],
+        .form-style-5 input[type="search"],
+        .form-style-5 input[type="time"],
+        .form-style-5 input[type="url"],
+        .form-style-5 textarea,
+        .form-style-5 select {
+            font-family: Georgia, "Times New Roman", Times, serif;
+            background: rgba(255,255,255,.1);
+            border: none;
+            border-radius: 4px;
+            font-size: 15px;
+            margin: 0;
+            outline: 0;
+            padding: 10px;
+            width: 100%;
+            box-sizing: border-box; 
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box; 
+            background-color: #e8eeef;
+            color:#8a97a0;
+            -webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
+            box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
+            margin-bottom: 30px;
+        }
+        .form-style-5 input[type="text"]:focus,
+        .form-style-5 input[type="date"]:focus,
+        .form-style-5 input[type="datetime"]:focus,
+        .form-style-5 input[type="email"]:focus,
+        .form-style-5 input[type="number"]:focus,
+        .form-style-5 input[type="search"]:focus,
+        .form-style-5 input[type="time"]:focus,
+        .form-style-5 input[type="url"]:focus,
+        .form-style-5 textarea:focus,
+        .form-style-5 select:focus{
+            background: #d2d9dd;
+        }
+        .form-style-5 select{
+            -webkit-appearance: menulist-button;
+            height:35px;
+        }
+        .form-style-5 .number {
+            background: #1abc9c;
+            color: #fff;
+            height: 30px;
+            width: 30px;
+            display: inline-block;
+            font-size: 0.8em;
+            margin-right: 4px;
+            line-height: 30px;
+            text-align: center;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.2);
+            border-radius: 15px 15px 15px 0px;
+        }
+
+        .form-style-5 input[type="submit"],
+        .form-style-5 input[type="button"]
+        {
+            position: relative;
+            display: block;
+            padding: 19px 39px 18px 39px;
+            color: #FFF;
+            margin: 0 auto;
+            background: #1abc9c;
+            font-size: 18px;
+            text-align: center;
+            font-style: normal;
+            width: 100%;
+            border: 1px solid #16a085;
+            border-width: 1px 1px 3px;
+            margin-bottom: 10px;
+        }
+        .form-style-5 input[type="submit"]:hover,
+        .form-style-5 input[type="button"]:hover
+        {
+            background: #109177;
+        }
+
+        .fancy {
+        text-align: center;
+
+        /* Same trick as previsouly used to make circles */
+        box-sizing: border-box;
+        width     : 150px;
+        height    : 150px;
+        padding   : 80px 1em 0 1em;
+
+        /* We make room for the "ears" of our cloud */
+        margin    : 0 100px;
+
+        position: relative;
+
+        background-color: #A4C9CF;
+
+        /* Well, actually we are not making a full circle
+         as we want the bottom of our cloud to be flat.
+         Feel free to tweak this example to make a cloud
+         that isn't flat at the bottom ;) */
+        border-radius: 100% 100% 0 0;
+        }
+
+        /* Those are common style that apply to both our ::before
+        and ::after pseudo elements. */
+        .fancy::before,
+        .fancy::after {
+        /* This is required to be allowed to display the
+         pseudo-elements, event if the value is an empty
+         string */
+        content: '';
+
+        /* We positionnate our pseudo-elements on the left and
+         right sides of the box, but always at the bottom */
+        position: absolute;
+        bottom  : 0;
+
+        /* This makes sure our pseudo-elements will be below
+         the box content whatever happens. */
+        z-index : -1;
+
+        background-color: #A4C9CF;
+        border-radius: 100%;
+        }
+
+        .fancy::before {
+        /* This is the  size of the clouds left ear */
+        width  : 125px;
+        height : 125px;
+
+        /* We sligthly move it to the left */
+        left    : -80px;
+
+        /* To make sure that the bottom of the cloud
+         remains flat, we must make the bottom right
+         corner of the left ear square. */
+        border-bottom-right-radius: 0;
+        }
+
+        .fancy::after {
+        /* This is the size of the clouds left ear */
+        width  : 100px;
+        height : 100px;
+
+        /* We sligthly move it to the right */
+        right   : -60px;
+
+        /* To make sure that the bottom of the cloud
+         remains flat, we must make the bottom left
+         corner of the right ear square. */
+        border-bottom-left-radius: 0;
+        }
+       
     </style>
     <script type="text/javascript" src = "{% static 'clock.js' %}"></script>
     <script type="text/javascript" src = "{% static 'categoryChange.js' %}"></script>
@@ -48,6 +230,21 @@
         var gu_list = []
         var dong_list = []
 
+
+        function getLocation() {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+          } else {
+            x.innerHTML = "Geolocation is not supported by this browser.";
+          }
+        }
+        function showPosition(position) {
+          var x = document.getElementById("demo");
+          x.innerHTML = "Latitude: " + position.coords.latitude +
+          "<br>Longitude: " + position.coords.longitude;
+        }
+        
+
     </script>
 
     {% endblock %}
@@ -58,9 +255,11 @@
 
     {% block extra_head %}{% endblock %}
 </head>
-<body class="hold-transition sidebar-mini {% block body_class %}{% block bodyclass %}{% endblock %}{% endblock %}">
+<body onload="getLocation();" class="hold-transition sidebar-mini {% block body_class %}{% block bodyclass %}{% endblock %}{% endblock %}">
 
 {% block body %}
+
+
 <div class="wrapper">
     {% block nav_header %}
     {% include 'adminlte/lib/_main_header.html' %}
@@ -124,10 +323,12 @@
                                 <label for="real_time" style="margin-right:15px;">외출 시간</label>
                                 <input class="real_time" id="real_time" name="real_time" type="time" value="xxx" min="yyy" max="zzz" required>
                             </div>
+
                             <div class="form-group" >
                                 <label for="home_time" style="margin-right:15px;">퇴근 시간</label>
                                 <input class="home_time" id="home_time" name="home_time" type="time" value="xxx" min="yyy" max="zzz">
                             </div>
+
                             <div class="form-group" id="location" name="location">
                                 <label for="location" style="margin-top:15px">당신의 동네는 어디오?</label>
                                 <div class="row" >
@@ -143,6 +344,7 @@
                                             </select>
                                         </div>
                                     </div>
+
                                     <div class="row-sm-7">
                                         <!-- select 구역 -->
                                         <div class="form-group" style="padding:10px;">
@@ -152,6 +354,7 @@
                                             </select>
                                         </div>
                                     </div>
+
                                     <div class="row-sm-7">
                                         <!-- select 동 -->
                                         <div class="form-group" style="padding:10px;">
@@ -163,21 +366,26 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="form-group">
                                 <label for="exampleInputFile">지하철 역</label>
                                 <!-- /.교통 검색창 start -->
                                 <div class="card-body" id="search">
                                     <p>지하철 <code></code></p>
                                     <div class="autocomplete" style="width:300px;" id = "div_input">
-                                        <input type="text" name="myInput" id="myInput" placeholder="역 이름을 입력해주세요" required value="">
+                                        <input type="text" name="myInput" id="myInput" placeholder="역 이름을 입력해주세요" required value="" autocomplete="off">
                                     </div>
                                 </div>
                                 <!--/.교통 검색창 end -->
                             </div>
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                <label class="form-check-label" for="exampleCheck1">Check me out</label>
+
+                            <!-- 버스검색창 start -->
+                            <div id="map" style="width:40%;height:200px;">
+                                <p> 버스 정류소 조회 임시 구역입니다.</p>
+                                <p id="demo"></p>
                             </div>
+                            <!--/.버스 검색창 end -->
+
                         </div>
                         <!-- /.card-body -->
 
@@ -189,6 +397,54 @@
                 <!-- /.card -->
             </div>
             <!-- /.content -->
+
+         
+            <div class="fancy">Hi! I want to be fancy.
+                <h1 id="watch"><span id="nowClock"></span></h1>
+            </div>
+            <div class="form-style-5">
+                <form>
+                    <fieldset>
+                    <legend><span class="number">1</span> What's your Routine?</legend>
+                        <label for="realTime">출근시간:</label>
+                        <input class="real_time" id="realTime" name="real_time" type="time" value="xxx" min="yyy" max="zzz" required>
+                        <label for="homeTime">퇴근시간:</label>
+                        <input class="home_time" id="homeTime" name="home_time" type="time" value="xxx" min="yyy" max="zzz" required>
+                        <input type="email" name="field2" placeholder="퇴근 후 정기적 일정이 있습니까? *">
+        
+                    <legend><span class="number">2</span> 날씨</legend>
+                    <label for="si">거주지역:</label>
+                        <select id="si" name="field4">
+                            <optgroup label="Indoors">
+                                <option value="fishkeeping">시,도</option>
+                            </optgroup>
+                        </select>
+                        <select id="cu" name="field4">
+                            <optgroup label="Indoors">
+                                <option value="fishkeeping">구</option>
+                            </optgroup>
+                        </select>
+                        <select id="dong" name="field4">
+                            <optgroup label="Indoors">
+                                <option value="fishkeeping">동,읍,면</option>
+                            </optgroup>
+                        </select>
+        
+                    <legend><span class="number">3</span> 교통</legend>  
+                    <label for = "field1">지하철 역</label>
+                        <input type="text" id="field1" name="field1" placeholder="역 이름을 입력해주세요 *">
+                        <label for = "field2">버스</label>
+                        <input type="text" id="field2" name="field1" placeholder="역 이름을 입력해주세요 *">
+                    </fieldset>
+                    <fieldset>
+                    <legend><span class="number">4</span> 서비스 발전을 위해 소중한 한 마디 부탁드립니다</legend>
+                        <textarea name="field3" placeholder="i love your comments"></textarea>
+                    </fieldset>
+                    <input type="submit" value="Apply" />
+                </form>
+            </div>
+           
+
             {% endblock %}
             {% endblock %}
         </section>
