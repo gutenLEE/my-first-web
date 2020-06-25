@@ -135,77 +135,50 @@
             background: #109177;
         }
 
-        .fancy {
-        text-align: center;
-
-        /* Same trick as previsouly used to make circles */
-        box-sizing: border-box;
-        width     : 150px;
-        height    : 150px;
-        padding   : 80px 1em 0 1em;
-
-        /* We make room for the "ears" of our cloud */
-        margin    : 0 100px;
-
-        position: relative;
-
-        background-color: #A4C9CF;
-
-        /* Well, actually we are not making a full circle
-         as we want the bottom of our cloud to be flat.
-         Feel free to tweak this example to make a cloud
-         that isn't flat at the bottom ;) */
-        border-radius: 100% 100% 0 0;
+        .autocomplete {
+          /*the container must be positioned relative:*/
+          position: relative;
+          display: inline-block;
         }
-
-        /* Those are common style that apply to both our ::before
-        and ::after pseudo elements. */
-        .fancy::before,
-        .fancy::after {
-        /* This is required to be allowed to display the
-         pseudo-elements, event if the value is an empty
-         string */
-        content: '';
-
-        /* We positionnate our pseudo-elements on the left and
-         right sides of the box, but always at the bottom */
-        position: absolute;
-        bottom  : 0;
-
-        /* This makes sure our pseudo-elements will be below
-         the box content whatever happens. */
-        z-index : -1;
-
-        background-color: #A4C9CF;
-        border-radius: 100%;
+        input {
+          border: 1px solid transparent;
+          background-color: #f1f1f1;
+          padding: 10px;
+          font-size: 16px;
         }
-
-        .fancy::before {
-        /* This is the  size of the clouds left ear */
-        width  : 125px;
-        height : 125px;
-
-        /* We sligthly move it to the left */
-        left    : -80px;
-
-        /* To make sure that the bottom of the cloud
-         remains flat, we must make the bottom right
-         corner of the left ear square. */
-        border-bottom-right-radius: 0;
+        input[type=text] {
+          background-color: #f1f1f1;
+          width: 100%;
         }
-
-        .fancy::after {
-        /* This is the size of the clouds left ear */
-        width  : 100px;
-        height : 100px;
-
-        /* We sligthly move it to the right */
-        right   : -60px;
-
-        /* To make sure that the bottom of the cloud
-         remains flat, we must make the bottom left
-         corner of the right ear square. */
-        border-bottom-left-radius: 0;
+        input[type=submit] {
+          background-color: DodgerBlue;
+          color: #fff;
+        }
+        .autocomplete-items {
+          position: absolute;
+          border: 1px solid #d4d4d4;
+          border-bottom: none;
+          border-top: none;
+          z-index: 99;
+          /*position the autocomplete items to be the same width as the container:*/
+          top: 100%;
+          left: 0;
+          right: 0;
+        }
+        .autocomplete-items div {
+          padding: 10px;
+          cursor: pointer;
+          background-color: #fff;
+          border-bottom: 1px solid #d4d4d4;
+        }
+        .autocomplete-items div:hover {
+          /*when hovering an item:*/
+          background-color: #e9e9e9;
+        }
+        .autocomplete-active {
+          /*when navigating through the items using the arrow keys:*/
+          background-color: DodgerBlue !important;
+          color: #ffffff;
         }
        
     </style>
@@ -213,7 +186,8 @@
     <script type="text/javascript" src = "{% static 'categoryChange.js' %}"></script>
     <script type="text/javascript" src = "{% static 'auto_station.js' %}"></script>
     <script type="text/css" src = "{% static 'autocomplete_css.css' %}"></script>
-
+    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=emi2uhro0h"></script>
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function() {
             realTimer();
@@ -230,20 +204,46 @@
         var gu_list = []
         var dong_list = []
 
+        <!-- 위치 조회 -->
+         var infowindow = new naver.maps.InfoWindow();
 
-        function getLocation() {
-          if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition);
-          } else {
-            x.innerHTML = "Geolocation is not supported by this browser.";
-          }
+        function onSuccessGeolocation(position) {
+
+            var location = new naver.maps.LatLng(position.coords.latitude,
+                                                 position.coords.longitude);
+
+            map.setCenter(location); // 얻은 좌표를 지도의 중심으로 설정합니다.
+            map.setZoom(15); // 지도의 줌 레벨을 변경합니다.
+
+            infowindow.setContent('<div style="padding:20px;">' + 'geolocation.getCurrentPosition() 위치' + '</div>');
+
+            infowindow.open(map, location);
+            console.log('Coordinates: ' + location.toString());
         }
-        function showPosition(position) {
-          var x = document.getElementById("demo");
-          x.innerHTML = "Latitude: " + position.coords.latitude +
-          "<br>Longitude: " + position.coords.longitude;
+
+        function onErrorGeolocation() {
+            var center = map.getCenter();
+
+            infowindow.setContent('<div style="padding:20px;">' +
+                '<h5 style="margin-bottom:5px;color:#f00;">Geolocation failed!</h5>'+ "latitude: "+ center.lat() +"<br />longitude: "+ center.lng() +'</div>');
+
+            infowindow.open(map, center);
         }
-        
+
+        $(window).on("load", function() {
+            if (navigator.geolocation) {
+                /**
+                 * navigator.geolocation 은 Chrome 50 버젼 이후로 HTTP 환경에서 사용이 Deprecate 되어 HTTPS 환경에서만 사용 가능 합니다.
+                 * http://localhost 에서는 사용이 가능하며, 테스트 목적으로, Chrome 의 바로가기를 만들어서 아래와 같이 설정하면 접속은 가능합니다.
+                 * chrome.exe --unsafely-treat-insecure-origin-as-secure="http://example.com"
+                 */
+                navigator.geolocation.getCurrentPosition(onSuccessGeolocation, onErrorGeolocation);
+            } else {
+                var center = map.getCenter();
+                infowindow.setContent('<div style="padding:20px;"><h5 style="margin-bottom:5px;color:#f00;">Geolocation not supported</h5></div>');
+                infowindow.open(map, center);
+            }
+        });
 
     </script>
 
@@ -255,7 +255,7 @@
 
     {% block extra_head %}{% endblock %}
 </head>
-<body onload="getLocation();" class="hold-transition sidebar-mini {% block body_class %}{% block bodyclass %}{% endblock %}{% endblock %}">
+<body class="hold-transition sidebar-mini {% block body_class %}{% block bodyclass %}{% endblock %}{% endblock %}">
 
 {% block body %}
 
@@ -316,135 +316,63 @@
                         <h3 class="card-title">출근 정보 입력</h3>
                     </div>
                     <!-- /.card-header -->
+
                     <!-- form start -->
-                    <form role="form" action = "{% url 'show' %}" method="get">
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label for="real_time" style="margin-right:15px;">외출 시간</label>
-                                <input class="real_time" id="real_time" name="real_time" type="time" value="xxx" min="yyy" max="zzz" required>
-                            </div>
+                    <div class="form-style-5">
+                        <form role="form" action = "{% url 'show' %}" method="get">
+                            <fieldset>
+                                <legend><span class="number">1</span> What's your Routine?</legend>
+                                    <label for="real_time">출근시간:</label>
+                                    <input class="real_time" id="real_time" name="real_time" type="time" value="xxx" min="yyy" max="zzz" required>
+                                    <label for="home_time">퇴근시간:</label>
+                                    <input class="home_time" id="home_time" name="home_time" type="time" value="xxx" min="yyy" max="zzz" required>
+                                    <input type="email" name="field2" placeholder="퇴근 후 정기적 일정이 있습니까? *">
 
-                            <div class="form-group" >
-                                <label for="home_time" style="margin-right:15px;">퇴근 시간</label>
-                                <input class="home_time" id="home_time" name="home_time" type="time" value="xxx" min="yyy" max="zzz">
-                            </div>
+                                <legend><span class="number">2</span> 날씨</legend>
+                                    <label for="city_select">거주지역:</label>
+                                    <select id="city_select" name="city_select" onchange=categoryChange('gu_select')>
+                                        <optgroup label="시,도"></optgroup>
+                                         <option value="Swedish Cars" class="optionGroup">시,도</option>
+                                         {% for city in cities %}
+                                         <option id="selected_city">{{ city }}</option>
+                                         {% endfor %}
+                                    </select>
 
-                            <div class="form-group" id="location" name="location">
-                                <label for="location" style="margin-top:15px">당신의 동네는 어디오?</label>
-                                <div class="row" >
-                                    <div class="row-sm-7">
-                                        <!-- select 도시 -->
-                                        <div class="form-group" style="padding:10px;">
-                                            <label>시</label>
-                                            <select class="custom-select" id="city_select" name="city_select" onchange=categoryChange('gu_select')>
-                                                <option disabled="True" selected>====</option>
-                                                {% for city in cities %}
-                                                <option id="selected_city">{{ city }}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
+                                <select class="custom-select" id ="gu_select" name="gu_select" onchange=category_dong('dong_select')>
+                                    <optgroup label="구"></optgroup>
+                                </select>
+
+                                <select  class="custom-select" id="dong_select" name="dong_select">
+                                    <optgroup label="동,읍,면">
+                                    </optgroup>
+                                </select>
+
+                                <!--교통-->
+                                <legend><span class="number">3</span> 교통</legend>
+                                    <label for = "div_input">지하철 역</label>
+                                    <div class="autocomplete" id="div_input">
+                                        <input type="text" id="myInput" name="myInput" placeholder="역 이름을 입력해주세요 *">
                                     </div>
 
-                                    <div class="row-sm-7">
-                                        <!-- select 구역 -->
-                                        <div class="form-group" style="padding:10px;">
-                                            <label>구</label>
-                                            <select class="custom-select" id ="gu_select" name="gu_select" onchange=category_dong('dong_select')>
-                                                <option disabled="False" selected>====</option>
-                                            </select>
-                                        </div>
+                                    <label for = "field2">버스</label>
+                                    <div id="map" style="width:100%;height:300px;">
+                                        <p> 버스 정류소 조회 임시 구역입니다.</p>
+                                        <p id="demo"></p>
                                     </div>
+                                    <input type="text" id="field2" name="field1" placeholder="역 이름을 입력해주세요 *">
 
-                                    <div class="row-sm-7">
-                                        <!-- select 동 -->
-                                        <div class="form-group" style="padding:10px;">
-                                            <label>동</label>
-                                            <select class="custom-select" id="dong_select" name="dong_select">
-                                                <option disabled="True" selected>---</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend><span class="number">4</span> 서비스 발전을 위해 소중한 한 마디 부탁드립니다</legend>
+                                <textarea name="field3" placeholder="i love your comments"></textarea>
+                            </fieldset>
 
-                            <div class="form-group">
-                                <label for="exampleInputFile">지하철 역</label>
-                                <!-- /.교통 검색창 start -->
-                                <div class="card-body" id="search">
-                                    <p>지하철 <code></code></p>
-                                    <div class="autocomplete" style="width:300px;" id = "div_input">
-                                        <input type="text" name="myInput" id="myInput" placeholder="역 이름을 입력해주세요" required value="" autocomplete="off">
-                                    </div>
-                                </div>
-                                <!--/.교통 검색창 end -->
-                            </div>
-
-                            <!-- 버스검색창 start -->
-                            <div id="map" style="width:40%;height:200px;">
-                                <p> 버스 정류소 조회 임시 구역입니다.</p>
-                                <p id="demo"></p>
-                            </div>
-                            <!--/.버스 검색창 end -->
-
-                        </div>
-                        <!-- /.card-body -->
-
-                        <div class="card-footer">
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </div>
-                    </form>
+                            <input type="submit" value="Apply" />
+                        </form>
+                    </div>
                 </div>
                 <!-- /.card -->
             </div>
-            <!-- /.content -->
-
-         
-            <div class="fancy">Hi! I want to be fancy.
-                <h1 id="watch"><span id="nowClock"></span></h1>
-            </div>
-            <div class="form-style-5">
-                <form>
-                    <fieldset>
-                    <legend><span class="number">1</span> What's your Routine?</legend>
-                        <label for="realTime">출근시간:</label>
-                        <input class="real_time" id="realTime" name="real_time" type="time" value="xxx" min="yyy" max="zzz" required>
-                        <label for="homeTime">퇴근시간:</label>
-                        <input class="home_time" id="homeTime" name="home_time" type="time" value="xxx" min="yyy" max="zzz" required>
-                        <input type="email" name="field2" placeholder="퇴근 후 정기적 일정이 있습니까? *">
-        
-                    <legend><span class="number">2</span> 날씨</legend>
-                    <label for="si">거주지역:</label>
-                        <select id="si" name="field4">
-                            <optgroup label="Indoors">
-                                <option value="fishkeeping">시,도</option>
-                            </optgroup>
-                        </select>
-                        <select id="cu" name="field4">
-                            <optgroup label="Indoors">
-                                <option value="fishkeeping">구</option>
-                            </optgroup>
-                        </select>
-                        <select id="dong" name="field4">
-                            <optgroup label="Indoors">
-                                <option value="fishkeeping">동,읍,면</option>
-                            </optgroup>
-                        </select>
-        
-                    <legend><span class="number">3</span> 교통</legend>  
-                    <label for = "field1">지하철 역</label>
-                        <input type="text" id="field1" name="field1" placeholder="역 이름을 입력해주세요 *">
-                        <label for = "field2">버스</label>
-                        <input type="text" id="field2" name="field1" placeholder="역 이름을 입력해주세요 *">
-                    </fieldset>
-                    <fieldset>
-                    <legend><span class="number">4</span> 서비스 발전을 위해 소중한 한 마디 부탁드립니다</legend>
-                        <textarea name="field3" placeholder="i love your comments"></textarea>
-                    </fieldset>
-                    <input type="submit" value="Apply" />
-                </form>
-            </div>
-           
-
             {% endblock %}
             {% endblock %}
         </section>
@@ -466,8 +394,26 @@
 {% block extra_js %}{% endblock %}
 
 {% block extra_foot %}{% endblock %}
+
+<script>
+     var map = new naver.maps.Map('map', {
+        center: new naver.maps.LatLng( 37.5697651251, 126.9877498816),
+        zoom: 15
+    });
+
+    var marker = new naver.maps.Marker({
+        position: new naver.maps.LatLng( 37.572790, 126.986328),
+        map: map
+    });
+
+    var marker = new naver.maps.Marker({
+        position: new naver.maps.LatLng( 37.573096, 126.985799),
+        map: map
+    },);
+</script>
+
 </body>
 <script>
-autocomplete(document.getElementById("myInput"), parse_station);
+    autocomplete(document.getElementById("myInput"), parse_station);
 </script>
 </html>
