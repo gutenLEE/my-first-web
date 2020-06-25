@@ -199,7 +199,7 @@
         var cities = {{ cities | safe }};
         var test = {{ test| safe }};
         var parse_station = {{ parse_station | safe}};
-
+        var busStationXY = {{ stationOnMap | safe }};
 
         var gu_list = []
         var dong_list = []
@@ -213,9 +213,9 @@
                                                  position.coords.longitude);
 
             map.setCenter(location); // 얻은 좌표를 지도의 중심으로 설정합니다.
-            map.setZoom(15); // 지도의 줌 레벨을 변경합니다.
+            map.setZoom(13); // 지도의 줌 레벨을 변경합니다.
 
-            infowindow.setContent('<div style="padding:20px;">' + 'geolocation.getCurrentPosition() 위치' + '</div>');
+            infowindow.setContent('<div style="padding:8px;">' + '현재 위치' + '</div>');
 
             infowindow.open(map, location);
             console.log('Coordinates: ' + location.toString());
@@ -245,6 +245,19 @@
             }
         });
 
+        function getLocation() {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+          } else {
+            x.innerHTML = "Geolocation is not supported by this browser.";
+          }
+        }
+        function showPosition(position) {
+          var x = document.getElementById("demo");
+          x.innerHTML = "Latitude: " + position.coords.latitude +
+          "<br>Longitude: " + position.coords.longitude;
+        }
+
     </script>
 
     {% endblock %}
@@ -255,7 +268,7 @@
 
     {% block extra_head %}{% endblock %}
 </head>
-<body class="hold-transition sidebar-mini {% block body_class %}{% block bodyclass %}{% endblock %}{% endblock %}">
+<body onload="getLocation(); busStationOnMap(busStationXY); " class="hold-transition sidebar-mini {% block body_class %}{% block bodyclass %}{% endblock %}{% endblock %}">
 
 {% block body %}
 
@@ -322,21 +335,21 @@
                         <form role="form" action = "{% url 'show' %}" method="get">
                             <fieldset>
                                 <legend><span class="number">1</span> What's your Routine?</legend>
-                                    <label for="real_time">출근시간:</label>
-                                    <input class="real_time" id="real_time" name="real_time" type="time" value="xxx" min="yyy" max="zzz" required>
-                                    <label for="home_time">퇴근시간:</label>
-                                    <input class="home_time" id="home_time" name="home_time" type="time" value="xxx" min="yyy" max="zzz" required>
-                                    <input type="email" name="field2" placeholder="퇴근 후 정기적 일정이 있습니까? *">
+                                <label for="real_time">출근시간:</label>
+                                <input class="real_time" id="real_time" name="real_time" type="time" value="xxx" min="yyy" max="zzz" required>
+                                <label for="home_time">퇴근시간:</label>
+                                <input class="home_time" id="home_time" name="home_time" type="time" value="xxx" min="yyy" max="zzz" required>
+                                <input type="email" name="field2" placeholder="퇴근 후 정기적 일정이 있습니까? *">
 
                                 <legend><span class="number">2</span> 날씨</legend>
-                                    <label for="city_select">거주지역:</label>
-                                    <select id="city_select" name="city_select" onchange=categoryChange('gu_select')>
-                                        <optgroup label="시,도"></optgroup>
-                                         <option value="Swedish Cars" class="optionGroup">시,도</option>
-                                         {% for city in cities %}
-                                         <option id="selected_city">{{ city }}</option>
-                                         {% endfor %}
-                                    </select>
+                                <label for="city_select">거주지역:</label>
+                                <select id="city_select" name="city_select" onchange=categoryChange('gu_select')>
+                                    <optgroup label="시,도"></optgroup>
+                                    <option value="Swedish Cars" class="optionGroup">시,도</option>
+                                    {% for city in cities %}
+                                    <option id="selected_city">{{ city }}</option>
+                                    {% endfor %}
+                                </select>
 
                                 <select class="custom-select" id ="gu_select" name="gu_select" onchange=category_dong('dong_select')>
                                     <optgroup label="구"></optgroup>
@@ -349,24 +362,22 @@
 
                                 <!--교통-->
                                 <legend><span class="number">3</span> 교통</legend>
-                                    <label for = "div_input">지하철 역</label>
-                                    <div class="autocomplete" id="div_input">
-                                        <input type="text" id="myInput" name="myInput" placeholder="역 이름을 입력해주세요 *">
-                                    </div>
+                                <label for = "div_input">지하철 역</label>
+                                <div class="autocomplete" id="div_input">
+                                    <input type="text" id="myInput" name="myInput" placeholder="역 이름을 입력해주세요 *">
+                                </div>
 
-                                    <label for = "field2">버스</label>
-                                    <div id="map" style="width:100%;height:300px;">
-                                        <p> 버스 정류소 조회 임시 구역입니다.</p>
-                                        <p id="demo"></p>
-                                    </div>
-                                    <input type="text" id="field2" name="field1" placeholder="역 이름을 입력해주세요 *">
+                                <label for = "field2">버스</label>
+                                <div id="map" style="width:100%;height:300px;"></div>
+                                <input type="text" id="field2" name="field1" placeholder="역 이름을 입력해주세요 *">
+                                <p id="demo"></p>
+                                <p id="test"></p>
 
                             </fieldset>
                             <fieldset>
                                 <legend><span class="number">4</span> 서비스 발전을 위해 소중한 한 마디 부탁드립니다</legend>
                                 <textarea name="field3" placeholder="i love your comments"></textarea>
                             </fieldset>
-
                             <input type="submit" value="Apply" />
                         </form>
                     </div>
@@ -406,10 +417,19 @@
         map: map
     });
 
-    var marker = new naver.maps.Marker({
-        position: new naver.maps.LatLng( 37.573096, 126.985799),
-        map: map
-    },);
+
+    for (i = 0; i < busStationXY.length; i++){
+
+        var gpsX = busStationXY[i]['gpsX'];
+        var gpsY = busStationXY[i]['gpsY'];
+
+        var marker = new naver.maps.Marker({
+            position: new naver.maps.LatLng( gpsY, gpsX),
+            map: map
+        });
+
+    };
+
 </script>
 
 </body>
