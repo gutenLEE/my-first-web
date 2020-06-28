@@ -60,19 +60,19 @@
             left: -20px;
             top: 12px;
         }
-
-
-
         table {
 <!--          border: 1px solid black;-->
           border-collapse: collapse;
           text-align: center;
           width:75% ;
         }
-
         th, td {
           padding: 2%;
         }
+        .timeline-box h5{
+            margin-bottom: 1.5rem;
+        }
+
 
 
 
@@ -355,9 +355,9 @@
                                     <td >하행/외선</td>
                                 </tr>
                                 <tr class="w_info">
-                                    <td id="upp"></td>
-                                    <td id="empty"></td>
-                                    <td id="downn"></td>
+<!--                                    <td id="upp"></td>-->
+<!--                                    <td id="empty"></td>-->
+<!--                                    <td id="downn"></td>-->
                                 </tr>
                             </table>
                         </div>
@@ -372,11 +372,11 @@
                 </div>
 
                 <div class="timeline-box" >
-                    <h5> 오늘의 날씨 </h5>
+                    <h5>{{ city_select }} {{ gu_select }} - 오늘의 날씨 </h5>
                         <div style="display: inline-flex;">
                         <table>
                             <tr>
-                                <th colspan="2" style="font-size: 26px;">현재 <br>{{ realtime_temp }} ℃</th>
+                                <th class="table-tag" colspan="2" style="font-size: 26px;">현재 <br>{{ realtime_temp }} ℃</th>
                             </tr>
                             <tr>
                                 <td>최저 <br>{{min_temp}} ℃</td>
@@ -385,7 +385,7 @@
                         </table>
                         <table>
                             <tr>
-                                <th colspan="2" style="font-size: 26px;">하늘상태 <br>{{ realtime_sky }}</th>
+                                <th class="table-tag" colspan="2" style="font-size: 26px;">하늘상태 <br>{{ realtime_sky }}</th>
                             </tr>
                             <tr>
                                 <td>강수확률 <br>{{ pop }}%</td>
@@ -394,7 +394,7 @@
                         </table>
                         <table>
                             <tr>
-                                <th colspan="2" style="font-size: 26px;">미세먼지</th>
+                                <th class="table-tag" colspan="2" style="font-size: 26px;">미세먼지</th>
                             </tr>
                             <tr>
                                 <td id="pm10">{{ fineDust}}</td>
@@ -405,7 +405,7 @@
                 </div>
                 <div class="timeline-box">
                     <h5>준비물</h5>
-                    <table>
+                    <table style="font-size: 26px;">
                         <tr class="materials" id="materials">
                             <td >옷</td>
                             <td >자외선</td>
@@ -421,23 +421,57 @@
                     </table>
                 </div>
                 <div class="timeline-box">
-                    <h5>지하철 - 실시간 도착 정보</h5>
-                        <tr class="w_info">
+                    <table class="set" style="border: 1px solid;">
+                        <tr>
+                            <h5>실시간 도착 정보</h5>
+                        </tr>
+
+                        <tr class="w_info" style="border: 1px solid;">
+                            <td ><img src="{% static 'photo/arrow.png' | resize:'20x40' %}" style="float: right";></td>
+                            <td >{{station}}역</td>
+                            <td ><img class="rotateimg180" src="{% static 'photo/arrow.png' | resize:'20x40' %}" style="float: left";></td>
+                        </tr>
+
+                        <tr class = "w_info"  style="border: 1px solid;">
                             <td id="up"></td>
                             <td id="station"></td>
                             <td id="down"></td>
                         </tr>
-                        <tr class="w_info">
+
+                        <tr class="w_info"  style="border: 1px solid;">
                             <td id="up2"></td>
                             <td id="station2"></td>
                             <td id="down2"></td>
                         </tr>
+
+                    </table>
                 </div>
+
+                <div class="timeline-box">
+                    <h5>{{ event_hour }}시 {{ event_minute }}분 전, 후 15분 내 도착하는 열차입니다.</h5>
+                    <table class="set">
+<!--                        <tr>-->
+<!--                            <td colspan="3" style="text-align:left;">{{ event_hour}}시 {{ event_minute }}분 전,후 15분 사이 도착하는 열차입니다</td>-->
+<!--                        </tr>-->
+                        <tr class="w_info" >
+                            <td >상행/내선</td>
+                            <td >{{station}}역</td>
+                            <td >하행/외선</td>
+                        </tr>
+                        <tr class="w_info">
+                            <td id="upp"></td>
+                            <td id="empty"></td>
+                            <td id="downn"></td>
+                        </tr>
+                    </table>
+                </div>
+
                 <div class="timeline-box">
                     <h2> Front end Developer</h2>
                     <h3>Yahoo</h3>
                     <h4> 2014 - Present </h4>
                 </div>
+
             </section>
             {% endblock %}
             {% endblock %}
@@ -461,5 +495,4 @@
 
 {% block extra_foot %}{% endblock %}
 </body>
-</script>
 </html>
