@@ -11,10 +11,71 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-COMPATIBLE" content="IE=edge">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR&display=swap" rel="stylesheet">
     <style>
-        table, th, td {
-            border: 1px solid black;
+
+        #leftTime{
+             font-family: 'Noto Serif KR', serif;
         }
+
+        .timeline-area {
+            font-family: 'Noto Serif KR', serif;
+            margin: 90px auto;
+            width: 80% ;
+            border-left: 2px solid #ccc;
+            padding: 0 20px 0 30px;
+        }
+        .timeline-box{
+            background-color: #fff;
+            padding: 10px 25px;
+            font-size: 10px;
+            border 1px solid #ccc;
+            line-height: 1.7;
+            position: relative;
+            height: auto;
+            table-layout:auto;
+            width: 60% auto;
+            margin-bottom: 20px;
+        }
+        .timeline-box:before{
+            content: '';
+            display: block;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background-color: #000;
+            border : 3px solid #ddd;
+            position: absolute;
+            top: 10px;
+            left: -42px;
+        }
+        .timeline-box:after{
+            content: '';
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-color: transparent #ddd transparent transparent;
+            border-width: 10px;
+            position: absolute;
+            left: -20px;
+            top: 12px;
+        }
+
+
+
+        table {
+<!--          border: 1px solid black;-->
+          border-collapse: collapse;
+          text-align: center;
+          width:75% ;
+        }
+
+        th, td {
+          padding: 2%;
+        }
+
+
+
         #search {
             background-color : pink;
         }
@@ -27,6 +88,7 @@
         }
         .set{
             left: 50%;
+            text-align:center;
             text-align:center;
 
         }
@@ -45,26 +107,59 @@
             font-size:30px;
             text-align:center;
         }
+        img {
+            padding: 0;
+            display: block;
+            margin: 0 auto auto 0;
+            max-height: 100px;
+            max-width: 100px;
+         }
+
+        #up2 li{
+            float: right;
+            list-style-type: none;
+        }
+        #down2 li{
+            float: left;
+            list-style-type: none;
+        }
+
+        .rotateimg180 {
+          -webkit-transform:rotate(180deg);
+          -moz-transform: rotate(180deg);
+          -ms-transform: rotate(180deg);
+          -o-transform: rotate(180deg);
+          transform: rotate(180deg);
+        }
+
+        <!--타임라인 CSS 시작-->
+
+
+
+
+
 
     </style>
     <script type="text/javascript" src = "{% static 'clock.js' %}"></script>
 
     <script>
+        <!--  Timer 변수  -->
         var event_hour = {{ event_hour | safe }}
         var event_minute = {{ event_minute |safe }}
 
+        <!-- 날씨 변수  -->
         var now_temp = {{ realtime_temp }}
         var pop = {{ pop }}
+        var fineDust = {{ fineDust }}
+        var fineDust2 = {{ fineDust2 }}
 
-        var arv_Msg = {{ arv_Msg | safe }}
-        var arv_Msg2 = {{ arv_Msg2 | safe }}
-        var last_LineNm = {{ last_LineNm | safe }}
-        var up_Line = {{ up_Line | safe }}
+        <!-- 지하철 변수 -->
         var station ="{{ station }}"
         var subway_line = "{{ subway_line }}"
         var line_code = {{ line_code }}
-        var result = {{ result | safe }};
+        var realtimeStationArrival = {{ result | safe }};
 
+        <!-- 상행 / 하행  -->
         var up = {{ up | safe }};
         var down = {{ down | safe }};
 
@@ -72,51 +167,6 @@
             countdown();
         });
 
-        function umbrella(){
-            if (pop > 50){
-                var target = document.getElementById("umbrella")
-                target.innerText = '우산 챙겨요!'
-            }
-            else if(pop < 50){
-                alert("fuc")
-                var target = document.getElementById("umbrella")
-                target.innerText = '필요없음!'
-            };
-
-                 alert(now_temp)
-            if ( now_temp < 5){
-                  var target = document.getElementById("clothing")
-                  target.innerHTML = "현재 너무 추워요.<br> 패딩, 두꺼운코트,<br> 목도리, 기모가 좋겠네요"
-            }
-            else if ( 5 <= now_temp && now_temp < 9){
-                  var target = document.getElementById("clothing")
-                  target.innerHTML = "현재 추워요.<br>  코트,경량패딩, 히트텍,<br> 니트, 레깅스가 좋겠네요"
-
-            }
-            else if ( 9 <= now_temp && now_temp < 17){
-                  var target = document.getElementById("clothing")
-                  target.innerHTML = "현재 쌀쌀해요.<br> 자켓, 트렌치코트,<br>야상, 니트, 청바지가 좋겠네요"
-
-            }
-            else if ( 17 <= now_temp && now_temp < 20){
-                  var target = document.getElementById("clothing")
-                  target.innerHTML = "현재 서늘해요.<br> 맨투맨, 얇은 니트, 가디건,<br> 청바지가 좋겠네요"
-
-            }
-            else if ( 20<= now_temp && now_temp < 23){
-                  var target = document.getElementById("clothing")
-                  target.innerHTML = "현재 선선해요.<br> 긴팔티, 얇은 가디건,<br> 면바지, 청바지가 좋겠네요"
-
-            }
-            else if (23 <= now_temp && now_temp < 26){
-                  var target = document.getElementById("clothing")
-                  target.innerHTML =  "<td class = 'outfit' >" + "반팔, 얇은 셔츠,<br> 반바지, 면바지가<br> 좋겠네요" +"</td>";
-            }
-            else if ( now_temp <= 26){
-                  var target = document.getElementById("clothing")
-                  target.innerHTML ="현재 기온 더워요<br> 민소매, 반바지,<br> 원피스가 좋겠네요"
-            };
-        };
     </script>
 
     {% endblock %}
@@ -127,7 +177,7 @@
 
     {% block extra_head %}{% endblock %}
 </head>
-<body onload='umbrella(); bring_data(result); timetable(up, down);' class="hold-transition sidebar-mini {% block body_class %}{% block bodyclass %}{% endblock %}{% endblock %}">
+<body onload='recommendClothing(pop, now_temp, fineDust, fineDust2); bring_data(realtimeStationArrival, subway_line); timetable(up, down);' class="hold-transition sidebar-mini {% block body_class %}{% block bodyclass %}{% endblock %}{% endblock %}">
 
 {% block body %}
 <div class="wrapper">
@@ -181,23 +231,23 @@
                         </div>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body" id="alarm" >
-                          <table class="set">
-                              <tr>
-                                  <td colspan="4" style="text-align:left;"><strong>{{ event_hour }}시 {{ event_minute }}분 까지 남은 시간</strong></td>
-                              </tr>
-                              <tr class="info" >
-                                  <td id="hours">4</td>
-                                  <td id="minutes">34</td>
-                                  <td id="seconds">32</td>
-                              </tr>
-                              <tr class="info">
-                                  <td>시간</td>
-                                  <td>분</td>
-                                  <td>초</td>
-                              </tr>
-                          </table>
-                    </div>
+<!--                    <div class="card-body" id="alarm" >-->
+<!--                          <table class="set">-->
+<!--                              <tr>-->
+<!--                                  <td colspan="4" style="text-align:left;"><strong>{{ event_hour }}시 {{ event_minute }}분 까지 남은 시간</strong></td>-->
+<!--                              </tr>-->
+<!--                              <tr class="info" >-->
+<!--                                  <td id="hours">4</td>-->
+<!--                                  <td id="minutes">34</td>-->
+<!--                                  <td id="seconds">32</td>-->
+<!--                              </tr>-->
+<!--                              <tr class="info">-->
+<!--                                  <td>시간</td>-->
+<!--                                  <td>분</td>-->
+<!--                                  <td>초</td>-->
+<!--                              </tr>-->
+<!--                          </table>-->
+<!--                    </div>-->
                     <!-- /.card-body -->
                 </div>
                 <!-- weather elements -->
@@ -234,22 +284,29 @@
                                       <td>{{ pop }}%</td>
                                       <td>{{ realtime_precipitation }}</td>
                                   </tr>
+                                  <tr class="dust_info">
+                                      <td id="pm10">fineDust[0]</td>
+                                      <td id="pm25">fineDust[1]</td>
+                                  </tr>
                             </table>
-                            <table>
-                                <tr>
-                                    <td colspan="4" style="text-align:left;">준비물</td>
-                                </tr>
-                                <tr class="materials" id="materials">
-                                    <td >옷</td>
-                                    <td >자외선</td>
-                                    <td >우산</td>
-                                </tr>
-                                <tr class="materials">
-                                    <td id="clothing">기모</td>
-                                    <td id="sunstick">23</td>
-                                    <td id="umbrella">24</td>
-                                </tr>
-                            </table>
+
+<!--                            <table>-->
+<!--                                <tr>-->
+<!--                                    <td colspan="4" style="text-align:left;">준비물</td>-->
+<!--                                </tr>-->
+<!--                                <tr class="materials" id="materials">-->
+<!--                                    <td >옷</td>-->
+<!--                                    <td >자외선</td>-->
+<!--                                    <td >우산</td>-->
+<!--                                    <td>마스크</td>-->
+<!--                                </tr>-->
+<!--                                <tr class="materials">-->
+<!--                                    <td id="clothing">기모</td>-->
+<!--                                    <td id="sunstick">23</td>-->
+<!--                                    <td id="umbrella">24</td>-->
+<!--                                    <td id="mask">24</td>-->
+<!--                                </tr>-->
+<!--                            </table>-->
                         </div>
                     </div>
                     <!-- /.card-body -->
@@ -273,20 +330,20 @@
                                     <td colspan="3" style="text-align:left;">실시간 도착 정보</td>
                                 </tr>
                                 <tr class="w_info" >
-                                    <td >상행/내선</td>
+                                    <td ><img src="{% static 'photo/arrow.png' | resize:'20x40' %}"></td>
                                     <td >{{station}}역</td>
-                                    <td >하행/외선</td>
+                                    <td ><img class="rotateimg180" src="{% static 'photo/arrow.png' | resize:'20x40' %}"></td>
                                 </tr>
-                                <tr class="w_info">
-                                    <td id="up"></td>
-                                    <td id="station"></td>
-                                    <td id="down"></td>
-                                </tr>
-                                    <tr class="w_info">
-                                    <td id="up2"></td>
-                                    <td id="station2"></td>
-                                    <td id="down2"></td>
-                                </tr>
+<!--                                <tr class="w_info">-->
+<!--                                    <td id="up"></td>-->
+<!--                                    <td id="station"></td>-->
+<!--                                    <td id="down"></td>-->
+<!--                                </tr>-->
+<!--                                    <tr class="w_info">-->
+<!--                                    <td id="up2"></td>-->
+<!--                                    <td id="station2"></td>-->
+<!--                                    <td id="down2"></td>-->
+<!--                                </tr>-->
                             </table>
                             <table class="set">
                                 <tr>
@@ -302,13 +359,86 @@
                                     <td id="empty"></td>
                                     <td id="downn"></td>
                                 </tr>
-
                             </table>
                         </div>
                     </div>
-                   <!-- /.card-body -->
             </div>
             <!-- /.content -->
+            <section class="timeline-area">
+                <div class="timeline-box" id="alarm">
+                    <h5> {{ event_hour }}시 {{ event_minute }}분 까지 남은 시간 </h5>
+                    <h1 Id="leftTime">Google</h1>
+                    <h5 id="alarmInfo"> Good morning! </h5>
+                </div>
+
+                <div class="timeline-box" >
+                    <h5> 오늘의 날씨 </h5>
+                        <div style="display: inline-flex;">
+                        <table>
+                            <tr>
+                                <th colspan="2" style="font-size: 26px;">현재 <br>{{ realtime_temp }} ℃</th>
+                            </tr>
+                            <tr>
+                                <td>최저 <br>{{min_temp}} ℃</td>
+                                <td>최고 <br>{{max_temp}} ℃</td>
+                            </tr>
+                        </table>
+                        <table>
+                            <tr>
+                                <th colspan="2" style="font-size: 26px;">하늘상태 <br>{{ realtime_sky }}</th>
+                            </tr>
+                            <tr>
+                                <td>강수확률 <br>{{ pop }}%</td>
+                                <td>강수량 <br>{{ realtime_precipitation }}</td>
+                            </tr>
+                        </table>
+                        <table>
+                            <tr>
+                                <th colspan="2" style="font-size: 26px;">미세먼지</th>
+                            </tr>
+                            <tr>
+                                <td id="pm10">{{ fineDust}}</td>
+                                <td id="pm25">{{ fineDust2}}</td>
+                            </tr>
+                        </table>
+                        </div>
+                </div>
+                <div class="timeline-box">
+                    <h5>준비물</h5>
+                    <table>
+                        <tr class="materials" id="materials">
+                            <td >옷</td>
+                            <td >자외선</td>
+                            <td >우산</td>
+                            <td>마스크</td>
+                        </tr>
+                        <tr class="materials">
+                            <td id="clothing">기모</td>
+                            <td id="sunstick">23</td>
+                            <td id="umbrella">24</td>
+                            <td id="mask">24</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="timeline-box">
+                    <h5>지하철 - 실시간 도착 정보</h5>
+                        <tr class="w_info">
+                            <td id="up"></td>
+                            <td id="station"></td>
+                            <td id="down"></td>
+                        </tr>
+                        <tr class="w_info">
+                            <td id="up2"></td>
+                            <td id="station2"></td>
+                            <td id="down2"></td>
+                        </tr>
+                </div>
+                <div class="timeline-box">
+                    <h2> Front end Developer</h2>
+                    <h3>Yahoo</h3>
+                    <h4> 2014 - Present </h4>
+                </div>
+            </section>
             {% endblock %}
             {% endblock %}
         </section>
@@ -331,7 +461,5 @@
 
 {% block extra_foot %}{% endblock %}
 </body>
-<script>
-
 </script>
 </html>
