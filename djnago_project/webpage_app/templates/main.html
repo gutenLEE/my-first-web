@@ -232,12 +232,8 @@
 
         $(window).on("load", function() {
             if (navigator.geolocation) {
-                /**
-                 * navigator.geolocation 은 Chrome 50 버젼 이후로 HTTP 환경에서 사용이 Deprecate 되어 HTTPS 환경에서만 사용 가능 합니다.
-                 * http://localhost 에서는 사용이 가능하며, 테스트 목적으로, Chrome 의 바로가기를 만들어서 아래와 같이 설정하면 접속은 가능합니다.
-                 * chrome.exe --unsafely-treat-insecure-origin-as-secure="http://example.com"
-                 */
                 navigator.geolocation.getCurrentPosition(onSuccessGeolocation, onErrorGeolocation);
+
             } else {
                 var center = map.getCenter();
                 infowindow.setContent('<div style="padding:20px;"><h5 style="margin-bottom:5px;color:#f00;">Geolocation not supported</h5></div>');
@@ -245,18 +241,30 @@
             }
         });
 
+
         function getLocation() {
+
           if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(showPosition);
           } else {
             x.innerHTML = "Geolocation is not supported by this browser.";
           }
+
         }
         function showPosition(position) {
-          var x = document.getElementById("demo");
-          x.innerHTML = "Latitude: " + position.coords.latitude +
-          "<br>Longitude: " + position.coords.longitude;
+
+<!--            var x = document.getElementById("demo");-->
+<!--            x.innerHTML = "Latitude: " + position.coords.latitude +-->
+<!--            "<br>Longitude: " + position.coords.longitude;-->
+
+            document.getElementById('getlat').value = position.coords.latitude;
+            document.getElementById('getlon').value = position.coords.longitude;
         }
+
+        function pageLoad(){
+            getLocation();
+        }
+
 
     </script>
 
@@ -268,7 +276,7 @@
 
     {% block extra_head %}{% endblock %}
 </head>
-<body onload="getLocation(); busStationOnMap(busStationXY); " class="hold-transition sidebar-mini {% block body_class %}{% block bodyclass %}{% endblock %}{% endblock %}">
+<body onload="getLocation(); busStationOnMap(busStationXY);" class="hold-transition sidebar-mini {% block body_class %}{% block bodyclass %}{% endblock %}{% endblock %}">
 
 {% block body %}
 
@@ -343,6 +351,7 @@
 
                                 <legend><span class="number">2</span> 날씨</legend>
                                 <label for="city_select">거주지역:</label>
+
                                 <select id="city_select" name="city_select" onchange=categoryChange('gu_select')>
                                     <optgroup label="시,도"></optgroup>
                                     <option value="Swedish Cars" class="optionGroup">시,도</option>
@@ -364,21 +373,25 @@
                                 <legend><span class="number">3</span> 교통</legend>
                                 <label for = "div_input">지하철 역</label>
                                 <div class="autocomplete" id="div_input">
-                                    <input type="text" id="myInput" name="myInput" placeholder="역 이름을 입력해주세요 *">
+                                    <input type="text" id="myInput" name="myInput" autocomplete="off" placeholder="역 이름을 입력해주세요 *">
                                 </div>
+
 
                                 <label for = "field2">버스</label>
                                 <div id="map" style="width:100%;height:300px;"></div>
                                 <input type="text" id="field2" name="field1" placeholder="역 이름을 입력해주세요 *">
-                                <p id="demo"></p>
-                                <p id="test"></p>
 
+                                <input  id="getlon" name="longitude">
+                                <input  id="getlat" name="latitude">
+                                <button type="button"  id="form1" value="전송">버튼</button>
+                                <div id="test">before</div>
                             </fieldset>
                             <fieldset>
+
                                 <legend><span class="number">4</span> 서비스 발전을 위해 소중한 한 마디 부탁드립니다</legend>
                                 <textarea name="field3" placeholder="i love your comments"></textarea>
                             </fieldset>
-                            <input type="submit" value="Apply" />
+                            <input type="submit" value="Start" />
                         </form>
                     </div>
                 </div>
@@ -412,12 +425,6 @@
         zoom: 15
     });
 
-    var marker = new naver.maps.Marker({
-        position: new naver.maps.LatLng( 37.572790, 126.986328),
-        map: map
-    });
-
-
     for (i = 0; i < busStationXY.length; i++){
 
         var gpsX = busStationXY[i]['gpsX'];
@@ -427,13 +434,42 @@
             position: new naver.maps.LatLng( gpsY, gpsX),
             map: map
         });
-
     };
-
 </script>
 
 </body>
 <script>
     autocomplete(document.getElementById("myInput"), parse_station);
 </script>
+<script src="http://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script type="text/javascript">
+  $(function(){
+
+    $('#form1').click(function(){
+        alert("dddddd")
+        var long = $('#getlon').val()
+        var lat = $('#getlat').val()
+
+        $.ajax({
+          url: "{% url 'ajax_posting' %}",
+          dataType:'json',
+          data: {'getlon': long,
+                 'getlat': lat},
+
+          success: function(data){
+         
+            $('#test').html(data.msg)
+            var bus = data.demo;
+            $.each(bus, function(key, value){
+                console.log(value)
+            });
+
+          }
+
+        });
+    });
+  });
+
+</script>
+
 </html>

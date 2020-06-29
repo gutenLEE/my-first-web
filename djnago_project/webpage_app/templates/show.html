@@ -61,7 +61,6 @@
             top: 12px;
         }
         table {
-<!--          border: 1px solid black;-->
           border-collapse: collapse;
           text-align: center;
           width:75% ;
@@ -131,13 +130,6 @@
           -o-transform: rotate(180deg);
           transform: rotate(180deg);
         }
-
-        <!--타임라인 CSS 시작-->
-
-
-
-
-
 
     </style>
     <script type="text/javascript" src = "{% static 'clock.js' %}"></script>
@@ -217,152 +209,6 @@
             {% endblock %}
             {% block content_block_wrap %}
             {% block content %}
-            <!-- Main content -->
-            <div class="countdownContainer">
-                <!-- clock elements -->
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">카운트다운</h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                <i class="fas fa-minus"></i></button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
-                                <i class="fas fa-times"></i></button>
-                        </div>
-                    </div>
-                    <!-- /.card-header -->
-<!--                    <div class="card-body" id="alarm" >-->
-<!--                          <table class="set">-->
-<!--                              <tr>-->
-<!--                                  <td colspan="4" style="text-align:left;"><strong>{{ event_hour }}시 {{ event_minute }}분 까지 남은 시간</strong></td>-->
-<!--                              </tr>-->
-<!--                              <tr class="info" >-->
-<!--                                  <td id="hours">4</td>-->
-<!--                                  <td id="minutes">34</td>-->
-<!--                                  <td id="seconds">32</td>-->
-<!--                              </tr>-->
-<!--                              <tr class="info">-->
-<!--                                  <td>시간</td>-->
-<!--                                  <td>분</td>-->
-<!--                                  <td>초</td>-->
-<!--                              </tr>-->
-<!--                          </table>-->
-<!--                    </div>-->
-                    <!-- /.card-body -->
-                </div>
-                <!-- weather elements -->
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">날씨</h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                <i class="fas fa-minus"></i></button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
-                                <i class="fas fa-times"></i></button>
-                        </div>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body" id="weather" >
-                        <div class="row">
-                            <table>
-                                <tr>
-                                    <td colspan="6" style="text-align:left;">날씨</td>
-                                </tr>
-                                  <tr class="w_info">
-                                      <td id="now_temp">현재 기온</td>
-                                      <td id="max_temp">최저</td>
-                                      <td id="min_temp">최고</td>
-                                      <td id="sky">하늘상태</td>
-                                      <td id="pop">강수확률</td>
-                                      <td id="precipitation">강수량</td>
-                                  </tr>
-                                  <tr class="w_info">
-                                      <td>{{ realtime_temp }} ℃</td>
-                                      <td>{{min_temp}} ℃</td>
-                                      <td>{{max_temp}} ℃</td>
-                                      <td>{{ realtime_sky }}</td>
-                                      <td>{{ pop }}%</td>
-                                      <td>{{ realtime_precipitation }}</td>
-                                  </tr>
-                                  <tr class="dust_info">
-                                      <td id="pm10">fineDust[0]</td>
-                                      <td id="pm25">fineDust[1]</td>
-                                  </tr>
-                            </table>
-
-<!--                            <table>-->
-<!--                                <tr>-->
-<!--                                    <td colspan="4" style="text-align:left;">준비물</td>-->
-<!--                                </tr>-->
-<!--                                <tr class="materials" id="materials">-->
-<!--                                    <td >옷</td>-->
-<!--                                    <td >자외선</td>-->
-<!--                                    <td >우산</td>-->
-<!--                                    <td>마스크</td>-->
-<!--                                </tr>-->
-<!--                                <tr class="materials">-->
-<!--                                    <td id="clothing">기모</td>-->
-<!--                                    <td id="sunstick">23</td>-->
-<!--                                    <td id="umbrella">24</td>-->
-<!--                                    <td id="mask">24</td>-->
-<!--                                </tr>-->
-<!--                            </table>-->
-                        </div>
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-                  <!-- subway elements -->
-                    <div class="card card-primary" style="margin-top:16px;" >
-                        <div class="card-header">
-                            <h3 class="card-title">{{subway_line}} {{station}}역</h3>
-
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                    <i class="fas fa-minus"></i></button>
-                                <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
-                                    <i class="fas fa-times"></i></button>
-                            </div>
-                        </div>
-                        <!-- /.card-header -->
-                        <div class="card-body" id="realtime_subway" >
-                            <table class="set" >
-                                <tr>
-                                    <td colspan="3" style="text-align:left;">실시간 도착 정보</td>
-                                </tr>
-                                <tr class="w_info" >
-                                    <td ><img src="{% static 'photo/arrow.png' | resize:'20x40' %}"></td>
-                                    <td >{{station}}역</td>
-                                    <td ><img class="rotateimg180" src="{% static 'photo/arrow.png' | resize:'20x40' %}"></td>
-                                </tr>
-<!--                                <tr class="w_info">-->
-<!--                                    <td id="up"></td>-->
-<!--                                    <td id="station"></td>-->
-<!--                                    <td id="down"></td>-->
-<!--                                </tr>-->
-<!--                                    <tr class="w_info">-->
-<!--                                    <td id="up2"></td>-->
-<!--                                    <td id="station2"></td>-->
-<!--                                    <td id="down2"></td>-->
-<!--                                </tr>-->
-                            </table>
-                            <table class="set">
-                                <tr>
-                                    <td colspan="3" style="text-align:left;">{{ event_hour}}시 {{ event_minute }}분 전,후 15분 사이 도착하는 열차입니다</td>
-                                </tr>
-                                <tr class="w_info" >
-                                    <td >상행/내선</td>
-                                    <td >{{station}}역</td>
-                                    <td >하행/외선</td>
-                                </tr>
-                                <tr class="w_info">
-<!--                                    <td id="upp"></td>-->
-<!--                                    <td id="empty"></td>-->
-<!--                                    <td id="downn"></td>-->
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-            </div>
             <!-- /.content -->
             <section class="timeline-area">
                 <div class="timeline-box" id="alarm">
@@ -450,18 +296,15 @@
                 <div class="timeline-box">
                     <h5>{{ event_hour }}시 {{ event_minute }}분 전, 후 15분 내 도착하는 열차입니다.</h5>
                     <table class="set">
-<!--                        <tr>-->
-<!--                            <td colspan="3" style="text-align:left;">{{ event_hour}}시 {{ event_minute }}분 전,후 15분 사이 도착하는 열차입니다</td>-->
-<!--                        </tr>-->
                         <tr class="w_info" >
                             <td >상행/내선</td>
                             <td >{{station}}역</td>
                             <td >하행/외선</td>
                         </tr>
                         <tr class="w_info">
-                            <td id="upp"></td>
+                            <td id="upp" style="text-align: left;" ></td>
                             <td id="empty"></td>
-                            <td id="downn"></td>
+                            <td id="downn" style="text-align: left;"></td>
                         </tr>
                     </table>
                 </div>
